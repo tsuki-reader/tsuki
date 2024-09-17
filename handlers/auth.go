@@ -3,6 +3,7 @@ package handlers
 import (
 	"time"
 	"tsuki/database"
+	"tsuki/external/anilist"
 	"tsuki/models"
 
 	"github.com/gofiber/fiber/v2"
@@ -22,9 +23,16 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
-	// TODO: Get user data from AniList using Viewer query
 	newToken := token.AccessToken
-	newName := "crxssed"
+	anilist.SetupClient(newToken)
+
+	viewer, _ := anilist.BuildAndSendRequest[anilist.ViewerData]("viewer")
+	if viewer == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Anilist account does not exist.",
+		})
+	}
+	newName := viewer.Viewer.Name
 
 	account := models.Account{
 		Model: gorm.Model{
@@ -75,14 +83,21 @@ func Logout(c *fiber.Ctx) error {
 func Status(c *fiber.Ctx) error {
 	authenticated := false
 
-	var account *models.Account
-	if account, _ = database.GetAccount(); account != nil {
+	var currentViewer anilist.Viewer
+	if account, _ := database.GetAccount(); account != nil {
 		if account.Token != "" {
-			authenticated = true
+			anilist.SetupClient(account.Token)
+
+			viewer, _ := anilist.BuildAndSendRequest[anilist.ViewerData]("viewer")
+			if viewer != nil {
+				authenticated = true
+				currentViewer = viewer.Viewer
+			}
 		}
 	}
 
 	return c.JSON(fiber.Map{
 		"authenticated": authenticated,
+		"viewer":        currentViewer,
 	})
 }
