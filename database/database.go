@@ -12,6 +12,7 @@ import (
 var DATABASE *gorm.DB
 var ACCOUNT *models.Account
 
+// TODO: In tests, this creates a new tsuki.db file
 func Connect() {
 	database, err := gorm.Open(sqlite.Open("tsuki.db"), &gorm.Config{})
 	if err != nil {

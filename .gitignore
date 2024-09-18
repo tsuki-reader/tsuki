@@ -29,3 +29,4 @@ go.work.sum
 
 # Web builds
 web/*
+!web/.keep
