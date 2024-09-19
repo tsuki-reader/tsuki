@@ -2,9 +2,10 @@ package anilist
 
 import (
 	"context"
-	"log"
 	"net/http"
+
 	"tsuki/external/queries"
+	"tsuki/interfaces"
 
 	"github.com/machinebox/graphql"
 )
@@ -12,6 +13,14 @@ import (
 type HeaderTransport struct {
 	Transport http.RoundTripper
 	Headers   map[string]string
+}
+
+type ClientInterface interface {
+	Run(ctx context.Context, req *graphql.Request, resp interface{}) error
+}
+
+type GraphQLClient struct {
+	*graphql.Client
 }
 
 func (t *HeaderTransport) RoundTrip(req *http.Request) (*http.Response, error) {
@@ -25,8 +34,9 @@ func (t *HeaderTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	return t.Transport.RoundTrip(req)
 }
 
-var CLIENT *graphql.Client
+var CLIENT ClientInterface
 var TOKEN string
+var LOGGER interfaces.LoggerInterface = interfaces.NewLogger()
 
 func SetupClient(token string) {
 	if CLIENT != nil && TOKEN == token {
@@ -42,7 +52,7 @@ func SetupClient(token string) {
 		},
 	}
 
-	CLIENT = graphql.NewClient("https://graphql.anilist.co", graphql.WithHTTPClient(&httpClient))
+	CLIENT = &GraphQLClient{graphql.NewClient("https://graphql.anilist.co", graphql.WithHTTPClient(&httpClient))}
 }
 
 // TODO: What happens when anilist responds with an error code?
@@ -50,7 +60,7 @@ func BuildAndSendRequest[T any](queryName string) (*T, error) {
 	request, err := buildRequest(queryName)
 	if err != nil {
 		// This should never happen. If it does, it points to an implementation error.
-		log.Fatal("Could not find Anilist query")
+		LOGGER.Fatal("Could not find Anilist query")
 	}
 
 	ctx := context.Background()

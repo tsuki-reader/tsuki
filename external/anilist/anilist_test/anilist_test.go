@@ -2,6 +2,7 @@ package anilist_test
 
 import (
 	"tsuki/external/anilist"
+	"tsuki/test/mocks"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -68,6 +69,44 @@ var _ = Describe("Anilist", func() {
 				Expect(anilist.TOKEN).To(Equal("InitialToken"))
 				anilist.SetupClient("InitialToken")
 				Expect(anilist.TOKEN).To(Equal("InitialToken"))
+			})
+		})
+	})
+
+	Describe("BuildAndSendRequest", func() {
+		Context("when query is not found", func() {
+			It("logs fatal", func() {
+				mockLogger := &mocks.MockLogger{}
+				anilist.LOGGER = mockLogger
+				Expect(func() {
+					anilist.BuildAndSendRequest[anilist.ViewerData]("bogus")
+				}).To(PanicWith("Fatal called."))
+				Expect(mockLogger.FatalCalled).To(BeTrue())
+			})
+		})
+
+		Context("when an error occurs sending the request", func() {
+			It("returns nil and an error", func() {
+				// File does not exist so will return an error. We don't really care *why* the error has been thrown,
+				// we only care that the error is returned if and when one occurs.
+				mockClient := &mocks.MockClient{ResponseFile: "../../../test/data/viewer_with_error.json"}
+				anilist.CLIENT = mockClient
+				resp, err := anilist.BuildAndSendRequest[anilist.ViewerData]("viewer")
+				Expect(resp).To(BeNil())
+				Expect(err).NotTo(BeNil())
+			})
+		})
+
+		Context("when the request succeeds", func() {
+			It("returns the specified type", func() {
+				mockClient := &mocks.MockClient{ResponseFile: "../../../test/data/viewer.json"}
+				anilist.CLIENT = mockClient
+				resp, err := anilist.BuildAndSendRequest[anilist.ViewerData]("viewer")
+				Expect(err).To(BeNil())
+				Expect(resp.Viewer.Name).To(Equal("hooligan"))
+				Expect(resp.Viewer.BannerImage).To(Equal("https://example.com/print.png"))
+				Expect(resp.Viewer.Avatar.Large).To(Equal("https://example.com/large.png"))
+				Expect(resp.Viewer.Avatar.Medium).To(Equal("https://example.com/medium.png"))
 			})
 		})
 	})

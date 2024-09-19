@@ -1,7 +1,7 @@
 package database
 
 import (
-	"log"
+	"tsuki/interfaces"
 	"tsuki/models"
 
 	"gorm.io/driver/sqlite"
@@ -11,16 +11,17 @@ import (
 
 var DATABASE *gorm.DB
 var ACCOUNT *models.Account
+var LOGGER interfaces.LoggerInterface = interfaces.NewLogger()
 
 // TODO: In tests, this creates a new tsuki.db file
 func Connect() {
 	database, err := gorm.Open(sqlite.Open("tsuki.db"), &gorm.Config{})
 	if err != nil {
-		log.Fatal("Failed to connect to the database: ", err)
+		LOGGER.Fatal("Failed to connect to the database: ", err)
 	}
 
 	DATABASE = database
-	log.Println("Database connected successfully")
+	LOGGER.Println("Database connected successfully")
 }
 
 func UpdateAccount(account *models.Account) (*models.Account, error) {

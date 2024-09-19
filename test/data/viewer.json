@@ -1,0 +1,10 @@
+{
+    "Viewer": {
+        "name": "hooligan",
+        "bannerImage": "https://example.com/print.png",
+        "avatar": {
+            "large": "https://example.com/large.png",
+            "medium": "https://example.com/medium.png"
+        }
+    }
+}
