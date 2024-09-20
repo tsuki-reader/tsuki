@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"time"
+	"tsuki/core"
 	"tsuki/database"
 	"tsuki/external/anilist"
 	"tsuki/models"
@@ -99,5 +100,6 @@ func Status(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"authenticated": authenticated,
 		"viewer":        currentViewer,
+		"client_id":     core.CONFIG.Anilist.ClientID,
 	})
 }

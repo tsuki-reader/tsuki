@@ -29,6 +29,8 @@ func (c *Config) GetServerAddress() string {
 
 var CONFIG *Config
 
+// TODO: Add tests. We will need to point the config file to test/dump/config.ini so maybe
+// pass in an optional config dir to this function
 func SetupConfig() {
 	CONFIG = &Config{}
 	CONFIG.Logger = NewLogger()
@@ -66,9 +68,8 @@ func GetConfigDir() string {
 	return filepath.Join(dataDir, "Tsuki")
 }
 
-// Make the config dir if it doesn't exist
-// Make the config files with defaults if it doesn't exist
 func initConfig(configDir string) (string, error) {
+	// Make the config dir if it doesn't exist
 	if err := os.MkdirAll(configDir, 0700); err != nil {
 		return "", err
 	}
