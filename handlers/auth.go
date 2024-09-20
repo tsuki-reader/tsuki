@@ -100,6 +100,6 @@ func Status(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"authenticated": authenticated,
 		"viewer":        currentViewer,
-		"client_id":     core.CONFIG.Anilist.ClientID,
+		"clientId":      core.CONFIG.Anilist.ClientID,
 	})
 }
