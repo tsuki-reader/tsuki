@@ -36,6 +36,18 @@ var _ = Describe("Anilist", func() {
 			})
 		})
 
+		Context("when client is not nil and token is an empty string", func() {
+			BeforeEach(func() {
+				anilist.SetupClient("InitialToken")
+			})
+
+			It("does not reset the token", func() {
+				Expect(anilist.TOKEN).To(Equal("InitialToken"))
+				anilist.SetupClient("")
+				Expect(anilist.TOKEN).To(Equal("InitialToken"))
+			})
+		})
+
 		Context("when client is not nil and given token is not the same as the current one", func() {
 			BeforeEach(func() {
 				anilist.SetupClient("InitialToken")

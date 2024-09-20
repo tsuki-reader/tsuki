@@ -6,6 +6,7 @@ import (
 
 	"tsuki/core"
 	"tsuki/database"
+	"tsuki/external/anilist"
 	"tsuki/handlers"
 	"tsuki/middleware"
 	"tsuki/models"
@@ -18,6 +19,7 @@ var webFS embed.FS
 
 func main() {
 	core.SetupConfig()
+	anilist.SetupClient("")
 
 	database.Connect()
 	database.DATABASE.AutoMigrate(&models.Account{})

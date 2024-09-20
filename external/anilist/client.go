@@ -42,13 +42,18 @@ func SetupClient(token string) {
 		return
 	}
 
-	TOKEN = token
-	httpClient := http.Client{
-		Transport: &HeaderTransport{
+	transport := http.DefaultTransport
+	if token != "" {
+		TOKEN = token
+		transport = &HeaderTransport{
 			Headers: map[string]string{
 				"Authorization": "Bearer " + TOKEN,
 			},
-		},
+		}
+	}
+
+	httpClient := http.Client{
+		Transport: transport,
 	}
 
 	CLIENT = &GraphQLClient{graphql.NewClient("https://graphql.anilist.co", graphql.WithHTTPClient(&httpClient))}
