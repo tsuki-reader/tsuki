@@ -23,6 +23,11 @@ type GraphQLClient struct {
 	*graphql.Client
 }
 
+type GraphQLVariable struct {
+	Key   string
+	Value interface{}
+}
+
 func (t *HeaderTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	for key, value := range t.Headers {
 		req.Header.Set(key, value)
@@ -60,11 +65,15 @@ func SetupClient(token string) {
 }
 
 // TODO: What happens when anilist responds with an error code?
-func BuildAndSendRequest[T any](queryName string) (*T, error) {
+func BuildAndSendRequest[T any](queryName string, variables ...GraphQLVariable) (*T, error) {
 	request, err := buildRequest(queryName)
 	if err != nil {
 		// This should never happen. If it does, it points to an implementation error.
 		core.CONFIG.Logger.Fatal("Could not find Anilist query")
+	}
+
+	for _, variable := range variables {
+		request.Var(variable.Key, variable.Value)
 	}
 
 	ctx := context.Background()

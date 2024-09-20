@@ -87,6 +87,7 @@ var _ = Describe("Anilist", func() {
 		})
 	})
 
+	// TODO: Figure out how to test the request vars if possible
 	Describe("BuildAndSendRequest", func() {
 		BeforeEach(func() {
 			mocks.BuildMockConfig(mockLogger, 3)
