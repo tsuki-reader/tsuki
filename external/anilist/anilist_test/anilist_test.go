@@ -13,6 +13,8 @@ func PurgeGlobals() {
 	anilist.TOKEN = ""
 }
 
+var mockLogger = &mocks.MockLogger{}
+
 var _ = Describe("Anilist", func() {
 	// TODO: Add some mocking for the http client
 	AfterEach(func() {
@@ -74,13 +76,15 @@ var _ = Describe("Anilist", func() {
 	})
 
 	Describe("BuildAndSendRequest", func() {
+		BeforeEach(func() {
+			mocks.BuildMockConfig(mockLogger, 3)
+		})
+
 		Context("when query is not found", func() {
 			It("logs fatal", func() {
-				mockLogger := &mocks.MockLogger{}
-				anilist.LOGGER = mockLogger
 				Expect(func() {
 					anilist.BuildAndSendRequest[anilist.ViewerData]("bogus")
-				}).To(PanicWith("Fatal called."))
+				}).To(PanicWith([]interface{}{"Could not find Anilist query"}))
 				Expect(mockLogger.FatalCalled).To(BeTrue())
 			})
 		})

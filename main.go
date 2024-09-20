@@ -3,8 +3,8 @@ package main
 import (
 	"embed"
 	"io/fs"
-	"log"
 
+	"tsuki/core"
 	"tsuki/database"
 	"tsuki/handlers"
 	"tsuki/middleware"
@@ -17,6 +17,8 @@ import (
 var webFS embed.FS
 
 func main() {
+	core.SetupConfig()
+
 	database.Connect()
 	database.DATABASE.AutoMigrate(&models.Account{})
 
@@ -24,11 +26,12 @@ func main() {
 
 	web, err := fs.Sub(webFS, "web")
 	if err != nil {
-		log.Fatal(err)
+		core.CONFIG.Logger.Fatal(err)
 	}
 
 	middleware.RegisterMiddleware(app, web)
 	handlers.RegisterRoutes(app)
 
-	log.Fatal(app.Listen(":1337"))
+	err = app.Listen(core.CONFIG.GetServerAddress())
+	core.CONFIG.Logger.Fatal(err)
 }

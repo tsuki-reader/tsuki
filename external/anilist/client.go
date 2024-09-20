@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 
+	"tsuki/core"
 	"tsuki/external/queries"
-	"tsuki/interfaces"
 
 	"github.com/machinebox/graphql"
 )
@@ -36,7 +36,6 @@ func (t *HeaderTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 var CLIENT ClientInterface
 var TOKEN string
-var LOGGER interfaces.LoggerInterface = interfaces.NewLogger()
 
 func SetupClient(token string) {
 	if CLIENT != nil && TOKEN == token {
@@ -60,7 +59,7 @@ func BuildAndSendRequest[T any](queryName string) (*T, error) {
 	request, err := buildRequest(queryName)
 	if err != nil {
 		// This should never happen. If it does, it points to an implementation error.
-		LOGGER.Fatal("Could not find Anilist query")
+		core.CONFIG.Logger.Fatal("Could not find Anilist query")
 	}
 
 	ctx := context.Background()

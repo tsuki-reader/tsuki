@@ -13,7 +13,7 @@ var mockLogger = &mocks.MockLogger{}
 var _ = Describe("Database", func() {
 	Describe("Connect", func() {
 		BeforeEach(func() {
-			database.LOGGER = mockLogger
+			mocks.BuildMockConfig(mockLogger, 2)
 		})
 
 		It("successfully connects to the database", func() {

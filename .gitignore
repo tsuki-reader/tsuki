@@ -30,3 +30,7 @@ go.work.sum
 # Web builds
 web/*
 !web/.keep
+
+# Test output files
+test/dump/*
+!test/dump/.keep

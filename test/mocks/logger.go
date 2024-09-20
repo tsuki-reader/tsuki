@@ -8,7 +8,7 @@ type MockLogger struct {
 func (m *MockLogger) Fatal(v ...interface{}) {
 	m.FatalCalled = true
 	m.Args = v
-	panic("Fatal called.")
+	panic(v)
 }
 
 func (m *MockLogger) Println(v ...interface{}) {
