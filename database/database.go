@@ -24,6 +24,13 @@ func Connect() {
 	core.CONFIG.Logger.Println("Database connected successfully")
 }
 
+func Migrate() {
+	DATABASE.AutoMigrate(
+		&models.Account{},
+		&models.Manga{},
+	)
+}
+
 func UpdateAccount(account *models.Account) (*models.Account, error) {
 	// Create/update the account regardless of whether it exists or not.
 	clause := clause.OnConflict{

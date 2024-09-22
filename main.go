@@ -9,7 +9,6 @@ import (
 	"tsuki/external/anilist"
 	"tsuki/handlers"
 	"tsuki/middleware"
-	"tsuki/models"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -22,7 +21,7 @@ func main() {
 	anilist.SetupClient("")
 
 	database.Connect()
-	database.DATABASE.AutoMigrate(&models.Account{})
+	database.Migrate()
 
 	app := fiber.New()
 
