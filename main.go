@@ -8,6 +8,7 @@ import (
 	"tsuki/database"
 	"tsuki/external/anilist"
 	"tsuki/handlers"
+	"tsuki/jobs"
 	"tsuki/middleware"
 
 	"github.com/gofiber/fiber/v2"
@@ -29,6 +30,8 @@ func main() {
 	if err != nil {
 		core.CONFIG.Logger.Fatal(err)
 	}
+
+	jobs.Run()
 
 	middleware.RegisterMiddleware(app, web)
 	handlers.RegisterRoutes(app)

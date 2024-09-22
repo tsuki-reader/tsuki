@@ -2,6 +2,7 @@ package anilist_test
 
 import (
 	"tsuki/external/anilist"
+	"tsuki/external/anilist/al_types"
 	"tsuki/test/mocks"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -96,7 +97,7 @@ var _ = Describe("Anilist", func() {
 		Context("when query is not found", func() {
 			It("logs fatal", func() {
 				Expect(func() {
-					anilist.BuildAndSendRequest[anilist.ViewerData]("bogus")
+					anilist.BuildAndSendRequest[al_types.ALViewerData]("bogus")
 				}).To(PanicWith([]interface{}{"Could not find Anilist query"}))
 				Expect(mockLogger.FatalCalled).To(BeTrue())
 			})
@@ -108,7 +109,7 @@ var _ = Describe("Anilist", func() {
 				// we only care that the error is returned if and when one occurs.
 				mockClient := &mocks.MockClient{ResponseFile: "../../../test/data/viewer_with_error.json"}
 				anilist.CLIENT = mockClient
-				resp, err := anilist.BuildAndSendRequest[anilist.ViewerData]("viewer")
+				resp, err := anilist.BuildAndSendRequest[al_types.ALViewerData]("viewer")
 				Expect(resp).To(BeNil())
 				Expect(err).NotTo(BeNil())
 			})
@@ -118,7 +119,7 @@ var _ = Describe("Anilist", func() {
 			It("returns the specified type", func() {
 				mockClient := &mocks.MockClient{ResponseFile: "../../../test/data/viewer.json"}
 				anilist.CLIENT = mockClient
-				resp, err := anilist.BuildAndSendRequest[anilist.ViewerData]("viewer")
+				resp, err := anilist.BuildAndSendRequest[al_types.ALViewerData]("viewer")
 				Expect(err).To(BeNil())
 				Expect(resp.Viewer.Name).To(Equal("hooligan"))
 				Expect(resp.Viewer.BannerImage).To(Equal("https://example.com/print.png"))

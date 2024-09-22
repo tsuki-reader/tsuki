@@ -5,6 +5,7 @@ import (
 	"tsuki/core"
 	"tsuki/database"
 	"tsuki/external/anilist"
+	"tsuki/external/anilist/al_types"
 	"tsuki/models"
 
 	"github.com/gofiber/fiber/v2"
@@ -27,7 +28,7 @@ func Login(c *fiber.Ctx) error {
 	newToken := token.AccessToken
 	anilist.SetupClient(newToken)
 
-	viewer, _ := anilist.BuildAndSendRequest[anilist.ViewerData]("viewer")
+	viewer, _ := anilist.BuildAndSendRequest[al_types.ALViewerData]("viewer")
 	if viewer == nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Anilist account does not exist.",
@@ -84,12 +85,12 @@ func Logout(c *fiber.Ctx) error {
 func Status(c *fiber.Ctx) error {
 	authenticated := false
 
-	var currentViewer anilist.Viewer
+	var currentViewer al_types.ALViewer
 	if account, _ := database.GetAccount(); account != nil {
 		if account.Token != "" {
 			anilist.SetupClient(account.Token)
 
-			viewer, _ := anilist.BuildAndSendRequest[anilist.ViewerData]("viewer")
+			viewer, _ := anilist.BuildAndSendRequest[al_types.ALViewerData]("viewer")
 			if viewer != nil {
 				authenticated = true
 				currentViewer = viewer.Viewer
