@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type Manga struct {
 	gorm.Model
-	AnilistID   int
+	AnilistID   int `gorm:"unique"`
 	Provider    string
 	Name        string
 	Romaji      string
