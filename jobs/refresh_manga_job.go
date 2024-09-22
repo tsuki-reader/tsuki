@@ -57,6 +57,9 @@ func RefreshMangaJob() error {
 				StartYear:   entry.Media.StartDate.Year,
 				StartMonth:  entry.Media.StartDate.Month,
 				Genres:      strings.Join(entry.Media.Genres, ","),
+				LargeCover:  entry.Media.CoverImage.Large,
+				MediumCover: entry.Media.CoverImage.Medium,
+				BannerImage: entry.Media.BannerImage,
 			}
 
 			if err := database.DATABASE.Clauses(clause).Create(&manga).Error; err != nil {

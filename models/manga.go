@@ -18,4 +18,7 @@ type Manga struct {
 	StartYear   int
 	StartMonth  int
 	Genres      string
+	MediumCover string
+	LargeCover  string
+	BannerImage string
 }
