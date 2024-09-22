@@ -1,6 +1,10 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"strings"
+
+	"gorm.io/gorm"
+)
 
 type Manga struct {
 	gorm.Model
@@ -21,4 +25,16 @@ type Manga struct {
 	MediumCover string
 	LargeCover  string
 	BannerImage string
+}
+
+func (m *Manga) ParsedGenres() []string {
+	g := strings.Split(m.Genres, ",")
+	var genres []string = []string{}
+	for _, genre := range g {
+		if genre != "" {
+			genres = append(genres, genre)
+		}
+	}
+
+	return genres
 }
