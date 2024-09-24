@@ -27,7 +27,7 @@ func Connect() {
 func Migrate() {
 	DATABASE.AutoMigrate(
 		&models.Account{},
-		&models.Manga{},
+		&models.MangaMapping{},
 	)
 }
 

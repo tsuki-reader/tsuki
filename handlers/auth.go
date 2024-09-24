@@ -20,8 +20,8 @@ func Login(c *fiber.Ctx) error {
 	token := new(Token)
 
 	if err := c.BodyParser(token); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "An error occurred. Ensure that you are including the access token in the JSON body.",
+		return c.Status(fiber.StatusBadRequest).JSON(ResponseError{
+			Error: "An error occurred. Ensure that you are including the access token in the JSON body.",
 		})
 	}
 
@@ -30,8 +30,8 @@ func Login(c *fiber.Ctx) error {
 
 	viewer, _ := anilist.BuildAndSendRequest[al_types.ALViewerData]("viewer")
 	if viewer == nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "Anilist account does not exist.",
+		return c.Status(fiber.StatusUnauthorized).JSON(ResponseError{
+			Error: "Anilist account does not exist.",
 		})
 	}
 	newName := viewer.Viewer.Name
@@ -46,8 +46,8 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	if _, err := database.UpdateAccount(&account); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "An error occurred while trying to save the token.",
+		return c.Status(fiber.StatusInternalServerError).JSON(ResponseError{
+			Error: "An error occurred while trying to save the token.",
 		})
 	}
 
@@ -66,6 +66,7 @@ func Logout(c *fiber.Ctx) error {
 			UpdatedAt: time.Now(),
 		},
 		Token: "",
+		Name:  "",
 	}
 
 	if _, err := database.UpdateAccount(&account); err != nil {
