@@ -3,8 +3,10 @@ package extensions
 import (
 	"encoding/json"
 	"errors"
+	"io/fs"
 	"net/http"
 	"path/filepath"
+	"strings"
 	"time"
 	"tsuki/core"
 	"tsuki/helpers"
@@ -99,4 +101,34 @@ func GetRepository(repositoryId string, repository *Repository) (string, error) 
 	}
 
 	return repositoryLocation, nil
+}
+
+func GetRepositories() ([]Repository, error) {
+	var repositories []Repository
+
+	err := filepath.WalkDir(core.CONFIG.Directories.Repositories, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() {
+			return nil
+		}
+
+		if filepath.Ext(path) != ".json" {
+			return nil
+		}
+
+		repositoryId := strings.SplitN(d.Name(), ".", 2)[0]
+		var repository Repository
+		_, err = GetRepository(repositoryId, &repository)
+		if err != nil {
+			return err
+		}
+		repositories = append(repositories, repository)
+
+		return nil
+	})
+
+	return repositories, err
 }
