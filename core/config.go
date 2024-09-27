@@ -20,6 +20,10 @@ type Config struct {
 		Config   string
 		Database string
 	}
+	Directories struct {
+		Repositories string
+		Providers    string
+	}
 	Logger LoggerInterface
 }
 
@@ -36,6 +40,12 @@ func SetupConfig() {
 	CONFIG.Logger = NewLogger()
 
 	configDir := GetConfigDir()
+
+	repositories, providers, err := createConfigDirs(configDir)
+	if err != nil {
+		CONFIG.Logger.Fatal("Could not create config directories: " + configDir)
+	}
+
 	configFilePath, err := initConfig(configDir)
 	if err != nil {
 		CONFIG.Logger.Fatal("Could not initialise config in directory: " + configDir)
@@ -58,6 +68,8 @@ func SetupConfig() {
 	CONFIG.Anilist.ClientID = clientId
 	CONFIG.Files.Config = configFilePath
 	CONFIG.Files.Database = filepath.Join(configDir, "tsuki.db")
+	CONFIG.Directories.Repositories = repositories
+	CONFIG.Directories.Providers = providers
 }
 
 func GetConfigDir() string {
@@ -69,11 +81,6 @@ func GetConfigDir() string {
 }
 
 func initConfig(configDir string) (string, error) {
-	// Make the config dir if it doesn't exist
-	if err := os.MkdirAll(configDir, 0700); err != nil {
-		return "", err
-	}
-
 	configFilePath := filepath.Join(configDir, "config.ini")
 	_, err := os.Stat(configFilePath)
 	if os.IsNotExist(err) {
@@ -84,6 +91,25 @@ func initConfig(configDir string) (string, error) {
 	}
 
 	return configFilePath, nil
+}
+
+func createConfigDirs(configDir string) (string, string, error) {
+	// Make the config dir if it doesn't exist
+	if err := os.MkdirAll(configDir, 0700); err != nil {
+		return "", "", err
+	}
+
+	repositoriesLocation := filepath.Join(configDir, "extensions", "repositories")
+	providersLocation := filepath.Join(configDir, "extensions", "providers")
+
+	if err := os.MkdirAll(repositoriesLocation, 0700); err != nil {
+		return "", "", err
+	}
+	if err := os.MkdirAll(providersLocation, 0700); err != nil {
+		return "", "", err
+	}
+
+	return repositoriesLocation, providersLocation, nil
 }
 
 // Create a config file with default values
