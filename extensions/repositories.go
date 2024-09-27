@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io/fs"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -23,6 +24,11 @@ type Repository struct {
 
 func (r *Repository) Update() error {
 	err := InstallRepository(r.URL, true)
+	return err
+}
+
+func (r *Repository) Uninstall() error {
+	err := UninstallRepository(r.ID)
 	return err
 }
 
@@ -131,4 +137,11 @@ func GetRepositories() ([]Repository, error) {
 	})
 
 	return repositories, err
+}
+
+func UninstallRepository(repositoryId string) error {
+	repositoryLocation := filepath.Join(core.CONFIG.Directories.Repositories, repositoryId+".json")
+
+	err := os.Remove(repositoryLocation)
+	return err
 }
