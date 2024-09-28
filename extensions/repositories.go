@@ -136,6 +136,10 @@ func GetRepositories() ([]Repository, error) {
 		return nil
 	})
 
+	if repositories == nil {
+		return []Repository{}, nil
+	}
+
 	return repositories, err
 }
 
