@@ -35,8 +35,12 @@ func RepositoriesCreate(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(fiber.Map{
-		"success": true,
-		"message": "Installed repository successfully",
-	})
+	repositories, err := extensions.GetRepositories()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(ResponseError{
+			Error: "An error occurred when trying to list repositories: " + err.Error(),
+		})
+	}
+
+	return c.JSON(repositories)
 }
