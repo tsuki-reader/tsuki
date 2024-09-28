@@ -6,7 +6,8 @@ import (
 )
 
 func UpdateDefaultRepoJob() {
-	err := extensions.InstallRepository("https://raw.githubusercontent.com/tsuki-reader/tsuki-repo/refs/heads/main/repo.json", true)
+	var repository extensions.Repository
+	err := extensions.InstallRepository("https://raw.githubusercontent.com/tsuki-reader/tsuki-repo/refs/heads/main/repo.json", true, &repository)
 	if err != nil {
 		core.CONFIG.Logger.Println("Could not install/update tsuki-repo")
 	}

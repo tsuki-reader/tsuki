@@ -23,7 +23,7 @@ type Repository struct {
 }
 
 func (r *Repository) Update() error {
-	err := InstallRepository(r.URL, true)
+	err := InstallRepository(r.URL, true, r)
 	return err
 }
 
@@ -32,7 +32,7 @@ func (r *Repository) Uninstall() error {
 	return err
 }
 
-func InstallRepository(jsonUrl string, update bool) error {
+func InstallRepository(jsonUrl string, update bool, repository *Repository) error {
 	client := http.Client{Timeout: 10 * time.Second}
 
 	request, err := helpers.BuildGetRequest(jsonUrl)
@@ -46,8 +46,7 @@ func InstallRepository(jsonUrl string, update bool) error {
 	}
 	defer response.Body.Close()
 
-	var repository Repository
-	err = json.NewDecoder(response.Body).Decode(&repository)
+	err = json.NewDecoder(response.Body).Decode(repository)
 	if err != nil {
 		return err
 	}

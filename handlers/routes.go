@@ -17,8 +17,9 @@ func RegisterRoutes(app *fiber.App) {
 	// ========== Manga
 	api.Get("/manga", MangaIndex)
 
-	// Repositories
+	// ========== Repositories
 	api.Get("/repositories", RepositoriesIndex)
 	api.Post("/repositories", RepositoriesCreate)
 	api.Delete("/repositories/:id", RepositoriesDestroy)
+	api.Patch("/repositories/:id", RepositoriesUpdate)
 }
