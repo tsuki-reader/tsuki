@@ -29,7 +29,7 @@ func (r *Repository) Update() error {
 	oldRepoId := r.ID
 	err := InstallRepository(r.URL, true, r)
 
-	if oldRepoId != "" && oldRepoId != r.ID {
+	if err == nil && oldRepoId != "" && oldRepoId != r.ID {
 		UninstallRepository(oldRepoId)
 	}
 
