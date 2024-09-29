@@ -24,6 +24,11 @@ func CreateAndWriteToFile(file string, contents string) error {
 	return nil
 }
 
+func CreateDirectory(location string) error {
+	err := os.MkdirAll(location, 0700)
+	return err
+}
+
 func ReadFileContents(file string) (string, error) {
 	contents, err := os.ReadFile(file)
 	if err != nil {

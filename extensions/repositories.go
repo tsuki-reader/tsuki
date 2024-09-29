@@ -4,25 +4,26 @@ import (
 	"encoding/json"
 	"errors"
 	"io/fs"
-	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strings"
-	"time"
 	"tsuki/core"
 	"tsuki/helpers"
+
+	"github.com/tsuki-reader/nisshoku/providers"
 )
 
 // Types
 
 type Repository struct {
-	Name           string     `json:"name"`
-	ID             string     `json:"id"`
-	Logo           string     `json:"logo"`
-	URL            string     `json:"url"`
-	MangaProviders []Provider `json:"manga_providers"`
-	ComicProviders []Provider `json:"comic_providers"`
+	Name           string      `json:"name"`
+	ID             string      `json:"id"`
+	Logo           string      `json:"logo"`
+	URL            string      `json:"url"`
+	MangaProviders []*Provider `json:"manga_providers"`
+	ComicProviders []*Provider `json:"comic_providers"`
 }
 
 func (r *Repository) Update() error {
@@ -41,17 +42,27 @@ func (r *Repository) Uninstall() error {
 	return err
 }
 
+func (r *Repository) GetProvider(providerId string, providerType providers.ProviderType) (*Provider, error) {
+	var _providers []*Provider
+
+	switch providerType {
+	case providers.Comic:
+		_providers = r.ComicProviders
+	case providers.Manga:
+		_providers = r.MangaProviders
+	}
+
+	foundProviderIdx := slices.IndexFunc(_providers, func(p *Provider) bool { return p.ID == providerId })
+	if foundProviderIdx == -1 {
+		return nil, errors.New("Could not find provider with ID " + providerId)
+	}
+	return _providers[foundProviderIdx], nil
+}
+
 // Public
 
 func InstallRepository(jsonUrl string, update bool, repository *Repository) error {
-	client := http.Client{Timeout: 10 * time.Second}
-
-	request, err := helpers.BuildGetRequest(jsonUrl)
-	if err != nil {
-		return err
-	}
-
-	response, err := client.Do(request)
+	response, err := helpers.SendRequest(jsonUrl)
 	if err != nil {
 		return err
 	}
@@ -69,6 +80,14 @@ func InstallRepository(jsonUrl string, update bool, repository *Repository) erro
 
 	if !validateRepositoryId(repository.ID) {
 		return errors.New("Repository ID failed validation check")
+	}
+
+	// Add the repository id to the providers
+	for _, provider := range repository.ComicProviders {
+		provider.SetRepositoryID(*repository)
+	}
+	for _, provider := range repository.MangaProviders {
+		provider.SetRepositoryID(*repository)
 	}
 
 	bytes, err := json.Marshal(repository)
