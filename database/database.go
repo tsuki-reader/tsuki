@@ -12,7 +12,6 @@ import (
 var DATABASE *gorm.DB
 var ACCOUNT *models.Account
 
-// TODO: In tests, this creates a new tsuki.db file
 func Connect() {
 	databaseLocation := core.CONFIG.Files.Database
 	database, err := gorm.Open(sqlite.Open(databaseLocation), &gorm.Config{})

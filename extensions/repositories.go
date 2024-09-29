@@ -52,7 +52,7 @@ func InstallRepository(jsonUrl string, update bool, repository *Repository) erro
 	}
 	repository.URL = jsonUrl
 
-	// TODO: Check what happens when someone has a funky id
+	// TODO: Validate repository id
 	if repository.Name == "" || repository.ID == "" {
 		return errors.New("Repository did not provide necessary information")
 	}

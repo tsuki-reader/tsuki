@@ -17,7 +17,6 @@ func PurgeGlobals() {
 var mockLogger = &mocks.MockLogger{}
 
 var _ = Describe("Anilist", func() {
-	// TODO: Add some mocking for the http client
 	AfterEach(func() {
 		PurgeGlobals()
 	})
