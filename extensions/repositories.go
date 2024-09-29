@@ -7,11 +7,14 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 	"tsuki/core"
 	"tsuki/helpers"
 )
+
+// Types
 
 type Repository struct {
 	Name           string     `json:"name"`
@@ -31,6 +34,8 @@ func (r *Repository) Uninstall() error {
 	err := UninstallRepository(r.ID)
 	return err
 }
+
+// Public
 
 func InstallRepository(jsonUrl string, update bool, repository *Repository) error {
 	client := http.Client{Timeout: 10 * time.Second}
@@ -52,9 +57,12 @@ func InstallRepository(jsonUrl string, update bool, repository *Repository) erro
 	}
 	repository.URL = jsonUrl
 
-	// TODO: Validate repository id
 	if repository.Name == "" || repository.ID == "" {
 		return errors.New("Repository did not provide necessary information")
+	}
+
+	if !validateRepositoryId(repository.ID) {
+		return errors.New("Repository ID failed validation check")
 	}
 
 	bytes, err := json.Marshal(repository)
@@ -147,4 +155,11 @@ func UninstallRepository(repositoryId string) error {
 
 	err := os.Remove(repositoryLocation)
 	return err
+}
+
+// Private
+
+func validateRepositoryId(repositoryId string) bool {
+	matched, _ := regexp.MatchString("[^a-zA-Z\\-\\d]", repositoryId)
+	return !matched
 }
