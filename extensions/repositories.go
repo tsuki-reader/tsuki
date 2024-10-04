@@ -59,6 +59,11 @@ func (r *Repository) GetProvider(providerId string, providerType providers.Provi
 	return _providers[foundProviderIdx], nil
 }
 
+func (r *Repository) BuildInternalProviderId(provider Provider, providerType providers.ProviderType) string {
+	_providerType := strings.ToLower(string(providerType))
+	return _providerType + "." + r.ID + "." + provider.ID
+}
+
 // Public
 
 func InstallRepository(jsonUrl string, update bool, repository *Repository) error {
@@ -80,14 +85,6 @@ func InstallRepository(jsonUrl string, update bool, repository *Repository) erro
 
 	if !validateRepositoryId(repository.ID) {
 		return errors.New("Repository ID failed validation check")
-	}
-
-	// Add the repository id to the providers
-	for _, provider := range repository.ComicProviders {
-		provider.SetRepositoryID(*repository)
-	}
-	for _, provider := range repository.MangaProviders {
-		provider.SetRepositoryID(*repository)
 	}
 
 	bytes, err := json.Marshal(repository)

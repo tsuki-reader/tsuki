@@ -2,8 +2,8 @@ package extensions
 
 import (
 	"io"
+	"os"
 	"path/filepath"
-	"strings"
 	"tsuki/core"
 	"tsuki/database"
 	"tsuki/helpers"
@@ -16,20 +16,10 @@ import (
 // Types
 
 type Provider struct {
-	Name         string `json:"name"`
-	ID           string `json:"id"`
-	File         string `json:"file"`
-	Icon         string `json:"icon"`
-	RepositoryId string `json:"repository_id"`
-}
-
-func (p *Provider) SetRepositoryID(r Repository) {
-	p.RepositoryId = r.ID
-}
-
-func (p *Provider) BuildInternalProviderId(providerType providers.ProviderType) string {
-	_providerType := strings.ToLower(string(providerType))
-	return _providerType + "." + p.RepositoryId + "." + p.ID
+	Name string `json:"name"`
+	ID   string `json:"id"`
+	File string `json:"file"`
+	Icon string `json:"icon"`
 }
 
 // Public
@@ -57,7 +47,7 @@ func InstallProvider(repository Repository, providerId string, providerType prov
 	goScript := string(responseBytes)
 
 	// Write the go script to the location filesystem.go
-	internalId := foundProvider.BuildInternalProviderId(providerType)
+	internalId := repository.BuildInternalProviderId(*foundProvider, providerType)
 	providerFile := filepath.Join(core.CONFIG.Directories.Providers, internalId+".go")
 
 	err = helpers.CreateAndWriteToFile(providerFile, goScript)
@@ -83,4 +73,32 @@ func InstallProvider(repository Repository, providerId string, providerType prov
 	}
 
 	return &installedProvider, nil
+}
+
+func GetProvider(repository Repository, providerId string, providerType providers.ProviderType) (*models.InstalledProvider, error) {
+	provider := models.InstalledProvider{}
+	err := database.DATABASE.Where(&models.InstalledProvider{
+		RepositoryId: repository.ID,
+		ProviderId:   providerId,
+		ProviderType: string(providerType),
+	}).First(&provider).Error
+	return &provider, err
+}
+
+func GetProviders(providerType providers.ProviderType) ([]models.InstalledProvider, error) {
+	providers := []models.InstalledProvider{}
+	err := database.DATABASE.Where(&models.InstalledProvider{ProviderType: string(providerType)}).Find(&providers).Error
+	return providers, err
+}
+
+func UninstallProvider(provider models.InstalledProvider) error {
+	// Purposefully ignore the returned error when removing file. If the file can't be removed/if it doesn't exist we don't
+	// want that from stopping the uninstall from happening.
+	err := os.Remove(provider.FileLocation)
+	if err != nil {
+		core.CONFIG.Logger.Println("Provider Uninstall: ", err)
+	}
+
+	err = database.DATABASE.Unscoped().Delete(&provider).Error
+	return err
 }
