@@ -5,9 +5,12 @@ import (
 	"path/filepath"
 	"strings"
 	"tsuki/core"
+	"tsuki/database"
 	"tsuki/helpers"
+	"tsuki/models"
 
 	"github.com/tsuki-reader/nisshoku/providers"
+	"gorm.io/gorm/clause"
 )
 
 // Types
@@ -31,43 +34,53 @@ func (p *Provider) BuildInternalProviderId(providerType providers.ProviderType) 
 
 // Public
 
-func InstallProvider(repository Repository, providerId string, providerType providers.ProviderType, update bool, provider *Provider) error {
+func InstallProvider(repository Repository, providerId string, providerType providers.ProviderType) (*models.InstalledProvider, error) {
 	// Get the provider from the repository. If it doesn't exist, return an error
 	foundProvider, err := repository.GetProvider(providerId, providerType)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	providerUrl := foundProvider.File
 
 	// Download the provider
 	response, err := helpers.SendRequest(providerUrl)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer response.Body.Close()
 
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	// TODO: Use yaegi to sanity check the golang string
 	goScript := string(responseBytes)
 
-	// Write the go script to the location comics.tsuki-repo.filesystem.go
+	// Write the go script to the location filesystem.go
 	internalId := foundProvider.BuildInternalProviderId(providerType)
-	providerDirectory := filepath.Join(core.CONFIG.Directories.Providers, internalId)
-	providerFile := filepath.Join(providerDirectory, "provider.go")
-
-	// TODO: Check if provider exits
-	err = helpers.CreateDirectory(providerDirectory)
-	if err != nil {
-		return err
-	}
+	providerFile := filepath.Join(core.CONFIG.Directories.Providers, internalId+".go")
 
 	err = helpers.CreateAndWriteToFile(providerFile, goScript)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	// Insert provider into database
+	clause := clause.OnConflict{
+		Columns:   []clause.Column{{Name: "repository_id"}, {Name: "provider_id"}, {Name: "provider_type"}},
+		UpdateAll: true,
+	}
+	installedProvider := models.InstalledProvider{
+		Name:         foundProvider.Name,
+		ProviderId:   providerId,
+		FileLocation: providerFile,
+		Icon:         foundProvider.Icon,
+		RepositoryId: repository.ID,
+		ProviderType: string(providerType),
+	}
+	if err := database.DATABASE.Clauses(clause).Create(&installedProvider).Error; err != nil {
+		return nil, err
+	}
+
+	return &installedProvider, nil
 }

@@ -27,6 +27,7 @@ func Migrate() {
 	DATABASE.AutoMigrate(
 		&models.Account{},
 		&models.MangaMapping{},
+		&models.InstalledProvider{},
 	)
 }
 
