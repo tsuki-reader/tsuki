@@ -158,6 +158,11 @@ func GetRepository(repositoryId string, repository *Repository) (string, error) 
 		return "", err
 	}
 
+	// TODO: Decide. Do we want to do this or make the frontend request the providers.
+	for _, p := range repository.MangaProviders {
+		p.Installed = database.RecordExists(&models.InstalledProvider{RepositoryId: repositoryId, ProviderType: string(providers.Manga), ProviderId: p.ID})
+	}
+
 	return repositoryLocation, nil
 }
 
