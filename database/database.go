@@ -1,6 +1,7 @@
 package database
 
 import (
+	"errors"
 	"tsuki/core"
 	"tsuki/models"
 
@@ -60,4 +61,9 @@ func GetAccount() (*models.Account, error) {
 	ACCOUNT = &account
 
 	return &account, nil
+}
+
+func RecordExists(record interface{}) bool {
+	err := DATABASE.First(record).Error
+	return !errors.Is(err, gorm.ErrRecordNotFound)
 }

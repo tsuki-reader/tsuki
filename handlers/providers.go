@@ -44,19 +44,16 @@ func ProvidersCreate(c *fiber.Ctx) error {
 		})
 	}
 
-	installedProvider, err := extensions.InstallProvider(repository, body.ProviderId, providerType)
+	_, err = extensions.InstallProvider(repository, body.ProviderId, providerType)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(&ResponseError{
 			Error: "An error occurred when installing the provider: " + err.Error(),
 		})
 	}
 
-	data := fiber.Map{
-		"success": true,
-		"message": installedProvider.Name + ": installed successfully",
-	}
+	providers := repository.GetProviders(providerType)
 
-	return c.JSON(data)
+	return c.JSON(providers)
 }
 
 // /api/providers/1 = GET = Show

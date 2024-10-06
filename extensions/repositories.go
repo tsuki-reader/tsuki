@@ -10,7 +10,9 @@ import (
 	"slices"
 	"strings"
 	"tsuki/core"
+	"tsuki/database"
 	"tsuki/helpers"
+	"tsuki/models"
 
 	"github.com/tsuki-reader/nisshoku/providers"
 )
@@ -56,7 +58,28 @@ func (r *Repository) GetProvider(providerId string, providerType providers.Provi
 	if foundProviderIdx == -1 {
 		return nil, errors.New("Could not find provider with ID " + providerId)
 	}
-	return _providers[foundProviderIdx], nil
+
+	result := _providers[foundProviderIdx]
+	result.Installed = database.RecordExists(&models.InstalledProvider{ProviderId: providerId, RepositoryId: r.ID, ProviderType: string(providerType)})
+
+	return result, nil
+}
+
+func (r *Repository) GetProviders(providerType providers.ProviderType) []*Provider {
+	_providers := []*Provider{}
+
+	switch providerType {
+	case providers.Comic:
+		_providers = r.ComicProviders
+	case providers.Manga:
+		_providers = r.MangaProviders
+	}
+
+	for _, p := range _providers {
+		p.Installed = database.RecordExists(&models.InstalledProvider{ProviderId: p.ID, RepositoryId: r.ID, ProviderType: string(providerType)})
+	}
+
+	return _providers
 }
 
 func (r *Repository) BuildInternalProviderId(provider Provider, providerType providers.ProviderType) string {

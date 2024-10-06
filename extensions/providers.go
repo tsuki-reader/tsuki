@@ -16,10 +16,11 @@ import (
 // Types
 
 type Provider struct {
-	Name string `json:"name"`
-	ID   string `json:"id"`
-	File string `json:"file"`
-	Icon string `json:"icon"`
+	Name      string `json:"name"`
+	ID        string `json:"id"`
+	File      string `json:"file"`
+	Icon      string `json:"icon"`
+	Installed bool   `json:"installed"`
 }
 
 // Public
@@ -75,7 +76,7 @@ func InstallProvider(repository Repository, providerId string, providerType prov
 	return &installedProvider, nil
 }
 
-func GetProvider(repository Repository, providerId string, providerType providers.ProviderType) (*models.InstalledProvider, error) {
+func GetInstalledProvider(repository Repository, providerId string, providerType providers.ProviderType) (*models.InstalledProvider, error) {
 	provider := models.InstalledProvider{}
 	err := database.DATABASE.Where(&models.InstalledProvider{
 		RepositoryId: repository.ID,
@@ -85,7 +86,7 @@ func GetProvider(repository Repository, providerId string, providerType provider
 	return &provider, err
 }
 
-func GetProviders(providerType providers.ProviderType) ([]models.InstalledProvider, error) {
+func GetInstalledProviders(providerType providers.ProviderType) ([]models.InstalledProvider, error) {
 	providers := []models.InstalledProvider{}
 	err := database.DATABASE.Where(&models.InstalledProvider{ProviderType: string(providerType)}).Find(&providers).Error
 	return providers, err
