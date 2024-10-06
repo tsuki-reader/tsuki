@@ -60,7 +60,10 @@ func (r *Repository) GetProvider(providerId string, providerType providers.Provi
 	}
 
 	result := _providers[foundProviderIdx]
-	result.Installed = database.RecordExists(&models.InstalledProvider{ProviderId: providerId, RepositoryId: r.ID, ProviderType: string(providerType)})
+	result.Installed = database.RecordExists(
+		&models.InstalledProvider{ProviderId: providerId, RepositoryId: r.ID, ProviderType: string(providerType)},
+		&models.InstalledProvider{},
+	)
 
 	return result, nil
 }
@@ -76,7 +79,10 @@ func (r *Repository) GetProviders(providerType providers.ProviderType) []*Provid
 	}
 
 	for _, p := range _providers {
-		p.Installed = database.RecordExists(&models.InstalledProvider{ProviderId: p.ID, RepositoryId: r.ID, ProviderType: string(providerType)})
+		p.Installed = database.RecordExists(
+			&models.InstalledProvider{ProviderId: p.ID, RepositoryId: r.ID, ProviderType: string(providerType)},
+			&models.InstalledProvider{},
+		)
 	}
 
 	return _providers
@@ -160,7 +166,10 @@ func GetRepository(repositoryId string, repository *Repository) (string, error) 
 
 	// TODO: Decide. Do we want to do this or make the frontend request the providers.
 	for _, p := range repository.MangaProviders {
-		p.Installed = database.RecordExists(&models.InstalledProvider{RepositoryId: repositoryId, ProviderType: string(providers.Manga), ProviderId: p.ID})
+		p.Installed = database.RecordExists(
+			&models.InstalledProvider{RepositoryId: repositoryId, ProviderType: string(providers.Manga), ProviderId: p.ID},
+			&models.InstalledProvider{},
+		)
 	}
 
 	return repositoryLocation, nil
@@ -174,6 +183,10 @@ func GetRepositories() ([]Repository, error) {
 			return err
 		}
 
+		if d == nil {
+			return errors.New("there was an error walking")
+		}
+
 		if d.IsDir() {
 			return nil
 		}
@@ -183,10 +196,10 @@ func GetRepositories() ([]Repository, error) {
 		}
 
 		repositoryId := strings.SplitN(d.Name(), ".", 2)[0]
-		var repository Repository
+		repository := Repository{}
 		_, err = GetRepository(repositoryId, &repository)
-		if err != nil {
-			return err
+		if err != nil || repository.ID == "" {
+			return errors.New("repository error")
 		}
 		repositories = append(repositories, repository)
 

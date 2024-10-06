@@ -67,8 +67,11 @@ func ProvidersDestroy(c *fiber.Ctx) error {
 		})
 	}
 
-	provider := models.InstalledProvider{ProviderId: providerId, RepositoryId: body.RepositoryId, ProviderType: string(providerType)}
-	err = database.DATABASE.First(&provider).Error
+	provider := models.InstalledProvider{}
+	err = database.DATABASE.
+		Where(&models.InstalledProvider{ProviderId: providerId, RepositoryId: body.RepositoryId, ProviderType: string(providerType)}).
+		First(&provider).
+		Error
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(&ResponseError{
 			Error: "Provider not found.",

@@ -63,7 +63,7 @@ func GetAccount() (*models.Account, error) {
 	return &account, nil
 }
 
-func RecordExists(record interface{}) bool {
-	err := DATABASE.First(record).Error
+func RecordExists(query interface{}, record interface{}) bool {
+	err := DATABASE.Where(query).First(record).Error
 	return !errors.Is(err, gorm.ErrRecordNotFound)
 }
