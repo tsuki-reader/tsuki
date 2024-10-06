@@ -26,4 +26,5 @@ func RegisterRoutes(app *fiber.App) {
 	// ========== Providers
 	api.Post("/providers", ProvidersCreate)
 	api.Patch("/providers/:id", ProvidersUpdate)
+	api.Delete("/providers/:id", ProvidersDestroy)
 }

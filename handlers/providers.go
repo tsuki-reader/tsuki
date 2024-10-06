@@ -3,7 +3,9 @@ package handlers
 import (
 	"errors"
 	"strings"
+	"tsuki/database"
 	"tsuki/extensions"
+	"tsuki/models"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/tsuki-reader/nisshoku/providers"
@@ -28,9 +30,9 @@ func ProvidersCreate(c *fiber.Ctx) error {
 	return installOrUpdateProvider(*body, c, body.ProviderId)
 }
 
-// /api/providers/provider-id = GET = Show
+// /api/providers/providerId = GET = Show
 
-// /api/providers/provider-id = PATCH = Update
+// /api/providers/providerId = PATCH = Update
 func ProvidersUpdate(c *fiber.Ctx) error {
 	providerId := c.Params("id")
 	body := new(params)
@@ -42,7 +44,47 @@ func ProvidersUpdate(c *fiber.Ctx) error {
 	return installOrUpdateProvider(*body, c, providerId)
 }
 
-// /api/providers/1 = DELETE = Destroy
+// /api/providers/providerId = DELETE = Destroy
+func ProvidersDestroy(c *fiber.Ctx) error {
+	providerId := c.Params("id")
+	body := new(params)
+
+	if err := c.BodyParser(body); err != nil || body.RepositoryId == "" || body.ProviderType == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(&ResponseError{Error: "An error occurred. Ensure that you are including the repository id and provider type in the JSON body."})
+	}
+
+	providerType, err := parseProviderType(body.ProviderType)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(&ResponseError{
+			Error: "Could not uninstall provider: " + err.Error(),
+		})
+	}
+
+	repository, err := getRepository(*body)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(&ResponseError{
+			Error: "Repository not found.",
+		})
+	}
+
+	provider := models.InstalledProvider{ProviderId: providerId, RepositoryId: body.RepositoryId, ProviderType: string(providerType)}
+	err = database.DATABASE.First(&provider).Error
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(&ResponseError{
+			Error: "Provider not found.",
+		})
+	}
+
+	err = extensions.UninstallProvider(provider)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(&ResponseError{
+			Error: "Could not uninstall provider: " + err.Error(),
+		})
+	}
+
+	providers := repository.GetProviders(providerType)
+	return c.JSON(providers)
+}
 
 // Private
 
@@ -68,9 +110,8 @@ func installOrUpdateProvider(body params, c *fiber.Ctx, providerId string) error
 		})
 	}
 
-	var repository extensions.Repository
-	_, err = extensions.GetRepository(body.RepositoryId, &repository)
-	if err != nil || repository.ID == "" {
+	repository, err := getRepository(body)
+	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(&ResponseError{
 			Error: "Repository not found.",
 		})
@@ -85,4 +126,14 @@ func installOrUpdateProvider(body params, c *fiber.Ctx, providerId string) error
 
 	providers := repository.GetProviders(providerType)
 	return c.JSON(providers)
+}
+
+func getRepository(body params) (extensions.Repository, error) {
+	repository := extensions.Repository{}
+	_, err := extensions.GetRepository(body.RepositoryId, &repository)
+	if err != nil || repository.ID == "" {
+		return repository, errors.New("repository not found")
+	}
+
+	return repository, nil
 }
