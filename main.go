@@ -6,6 +6,7 @@ import (
 
 	"tsuki/core"
 	"tsuki/database"
+	"tsuki/extensions/yaegi_interp"
 	"tsuki/external/anilist"
 	"tsuki/handlers"
 	"tsuki/jobs"
@@ -19,6 +20,7 @@ var webFS embed.FS
 
 func main() {
 	core.SetupConfig()
+	yaegi_interp.SetupInterp()
 	anilist.SetupClient("")
 
 	database.Connect()

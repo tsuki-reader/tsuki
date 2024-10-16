@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"tsuki/core"
 	"tsuki/database"
+	"tsuki/extensions/yaegi_interp"
 	"tsuki/helpers"
 	"tsuki/models"
 
@@ -44,8 +45,12 @@ func InstallProvider(repository Repository, providerId string, providerType prov
 	if err != nil {
 		return nil, err
 	}
-	// TODO: Use yaegi to sanity check the golang string
 	goScript := string(responseBytes)
+
+	_, err = yaegi_interp.EvaluateProvider(goScript)
+	if err != nil {
+		return nil, err
+	}
 
 	// Write the go script to the location filesystem.go
 	internalId := repository.BuildInternalProviderId(*foundProvider, providerType)

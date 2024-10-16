@@ -7,7 +7,8 @@ require (
 	github.com/machinebox/graphql v0.2.2
 	github.com/onsi/ginkgo/v2 v2.20.2
 	github.com/onsi/gomega v1.34.2
-	github.com/tsuki-reader/nisshoku v0.0.0-20240929145552-d4c49050e466
+	github.com/traefik/yaegi v0.16.1
+	github.com/tsuki-reader/nisshoku v0.0.0-20241016194912-a57917472f66
 	gopkg.in/ini.v1 v1.67.0
 	gorm.io/driver/sqlite v1.5.6
 	gorm.io/gorm v1.25.12
