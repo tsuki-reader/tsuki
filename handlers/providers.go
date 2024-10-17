@@ -18,6 +18,27 @@ type params struct {
 }
 
 // /api/providers = GET = Index
+func ProvidersIndex(c *fiber.Ctx) error {
+	providerTypeStr := c.Query("provider_type", "comics")
+	repositoryId := c.Query("repository_id")
+
+	providerType, err := parseProviderType(providerTypeStr)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(&ResponseError{Error: "Could not retrieve providers: " + err.Error()})
+	}
+
+	query := models.InstalledProvider{ProviderType: string(providerType)}
+	if repositoryId != "" {
+		query.RepositoryId = repositoryId
+	}
+
+	var providers []models.InstalledProvider
+	if err := database.DATABASE.Where(&query).Find(&providers).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(&ResponseError{Error: "Could not retrieve providers: " + err.Error()})
+	}
+
+	return c.JSON(providers)
+}
 
 // /api/providers = POST = Create
 func ProvidersCreate(c *fiber.Ctx) error {
