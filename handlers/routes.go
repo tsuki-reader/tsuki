@@ -1,6 +1,11 @@
 package handlers
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"tsuki/middleware"
+	"tsuki/models"
+
+	"github.com/gofiber/fiber/v2"
+)
 
 type ResponseError struct {
 	Error string `json:"error"`
@@ -8,11 +13,13 @@ type ResponseError struct {
 
 func RegisterRoutes(app *fiber.App) {
 	api := app.Group("/api")
+	api.Use(middleware.AuthMiddleware)
+
+	auth := app.Group("/auth")
 
 	// ========== Auth
-	api.Get("/auth/status", Status)
-	api.Post("/auth/login", Login)
-	api.Post("/auth/logout", Logout)
+	auth.Post("/register", Register)
+	auth.Post("/login", Login)
 
 	// ========== Manga
 	api.Get("/manga", MangaIndex)
@@ -28,4 +35,16 @@ func RegisterRoutes(app *fiber.App) {
 	api.Post("/providers", ProvidersCreate)
 	api.Patch("/providers/:id", ProvidersUpdate)
 	api.Delete("/providers/:id", ProvidersDestroy)
+}
+
+func getLocalAccount(c *fiber.Ctx) (*models.Account, error) {
+	local := c.Locals("account")
+	account, ok := local.(*models.Account)
+	if !ok {
+		return nil, c.Status(fiber.StatusUnauthorized).JSON(ResponseError{
+			Error: "Token invalid",
+		})
+	}
+
+	return account, nil
 }

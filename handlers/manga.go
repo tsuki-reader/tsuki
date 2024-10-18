@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"tsuki/database"
 	"tsuki/external/anilist"
 	"tsuki/external/anilist/al_types"
 
@@ -9,8 +8,12 @@ import (
 )
 
 func MangaIndex(c *fiber.Ctx) error {
-	account, err := database.GetAccount()
-	if err != nil || account.Token == "" || account.Name == "" {
+	account, response := getLocalAccount(c)
+	if response != nil {
+		return response
+	}
+
+	if account.AnilistToken == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(ResponseError{
 			Error: "You are not authorised.",
 		})
@@ -18,7 +21,7 @@ func MangaIndex(c *fiber.Ctx) error {
 
 	varUserName := anilist.GraphQLVariable{
 		Key:   "userName",
-		Value: account.Name,
+		Value: account.AnilistName,
 	}
 	listCollection, err := anilist.BuildAndSendRequest[al_types.ALMediaListCollectionData](
 		"media_list_collection",

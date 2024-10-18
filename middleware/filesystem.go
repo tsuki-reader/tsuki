@@ -12,7 +12,7 @@ import (
 
 func skipFilesystemMiddleware(c *fiber.Ctx) bool {
 	path := c.Path()
-	if strings.HasPrefix(path, "/api") {
+	if strings.HasPrefix(path, "/api") || strings.HasPrefix(path, "/auth") {
 		return true
 	}
 

@@ -1,6 +1,8 @@
 package core
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -10,8 +12,9 @@ import (
 
 type Config struct {
 	Server struct {
-		Host string
-		Port int
+		Host      string
+		Port      int
+		SecretKey string
 	}
 	Anilist struct {
 		ClientID string
@@ -59,12 +62,17 @@ func SetupConfig() {
 	serverSection := cfg.Section("Server")
 	host := serverSection.Key("host").MustString("127.0.0.1")
 	port := serverSection.Key("port").MustInt(1337)
+	secretKey := serverSection.Key("secret_key").MustString("")
+	if secretKey == "" {
+		CONFIG.Logger.Fatal("Could not read secret_key from config. It must be provided")
+	}
 
 	anilistSection := cfg.Section("Anilist")
 	clientId := anilistSection.Key("client_id").MustString("21156")
 
 	CONFIG.Server.Host = host
 	CONFIG.Server.Port = port
+	CONFIG.Server.SecretKey = secretKey
 	CONFIG.Anilist.ClientID = clientId
 	CONFIG.Files.Config = configFilePath
 	CONFIG.Files.Database = filepath.Join(configDir, "tsuki.db")
@@ -128,6 +136,7 @@ func createBaseConfig(configFilePath string) error {
 	serverSection := cfg.Section("Server")
 	serverSection.Key("host").SetValue("127.0.0.1")
 	serverSection.Key("port").SetValue("1337")
+	serverSection.Key("secret_key").SetValue(generateSecretKeyHex(50))
 
 	anilistSection := cfg.Section("Anilist")
 	anilistSection.Key("client_id").SetValue("21156")
@@ -137,4 +146,15 @@ func createBaseConfig(configFilePath string) error {
 	}
 
 	return nil
+}
+
+func generateSecretKeyHex(length int) string {
+	key := make([]byte, length)
+
+	_, err := rand.Read(key)
+	if err != nil {
+		return "change_me"
+	}
+
+	return hex.EncodeToString(key)
 }

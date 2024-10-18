@@ -7,7 +7,6 @@ import (
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 var DATABASE *gorm.DB
@@ -30,37 +29,6 @@ func Migrate() {
 		&models.MangaMapping{},
 		&models.InstalledProvider{},
 	)
-}
-
-func UpdateAccount(account *models.Account) (*models.Account, error) {
-	// Create/update the account regardless of whether it exists or not.
-	clause := clause.OnConflict{
-		Columns:   []clause.Column{{Name: "id"}},
-		UpdateAll: true,
-	}
-
-	if err := DATABASE.Clauses(clause).Create(account).Error; err != nil {
-		return nil, err
-	}
-
-	ACCOUNT = account
-
-	return account, nil
-}
-
-func GetAccount() (*models.Account, error) {
-	if ACCOUNT != nil {
-		return ACCOUNT, nil
-	}
-
-	var account models.Account
-	if err := DATABASE.First(&account).Error; err != nil {
-		return nil, err
-	}
-
-	ACCOUNT = &account
-
-	return &account, nil
 }
 
 func RecordExists(query interface{}, record interface{}) bool {
