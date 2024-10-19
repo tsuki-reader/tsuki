@@ -1,51 +1,55 @@
-query($userName: String) {
-  MediaListCollection(userName: $userName, type: MANGA, sort: UPDATED_TIME_DESC) {
-    lists {
-      name
-      isCustomList
-      isSplitCompletedList
-      status
-      entries {
-        progress
-        completedAt {
-          year
-          month
-          day
+query ($userName: String) {
+    MediaListCollection(
+        userName: $userName
+        type: MANGA
+        sort: UPDATED_TIME_DESC
+    ) {
+        lists {
+            name
+            isCustomList
+            isSplitCompletedList
+            status
+            entries {
+                progress
+                completedAt {
+                    year
+                    month
+                    day
+                }
+                startedAt {
+                    year
+                    month
+                    day
+                }
+                notes
+                score
+                status
+                media {
+                    id
+                    title {
+                        romaji
+                        english
+                        native
+                    }
+                    startDate {
+                        year
+                        month
+                        day
+                    }
+                    status
+                    chapters
+                    volumes
+                    coverImage {
+                        extraLarge
+                        large
+                        medium
+                        color
+                    }
+                    bannerImage
+                    description
+                    genres
+                }
+            }
         }
-        startedAt {
-          year
-          month
-          day
-        }
-        notes
-        score
-        status
-        media {
-          id
-          title {
-            romaji
-            english
-            native
-          }
-          startDate {
-            year
-            month
-            day
-          }
-          status
-          chapters
-          volumes
-          coverImage {
-            extraLarge
-            large
-            medium
-            color
-          }
-          bannerImage
-          description
-          genres
-        }
-      }
     }
-  }
 }
