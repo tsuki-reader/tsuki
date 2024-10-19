@@ -1,14 +1,10 @@
 package models
 
-import (
-	"gorm.io/gorm"
-)
-
 type MangaMapping struct {
-	gorm.Model
-	AnilistID  int `gorm:"unique"`
-	Provider   string
+	ID         uint `json:"id" gorm:"primarykey"`
+	AnilistID  int  `gorm:"unique"`
 	ProviderID string
+	ExternalID string
 	Progress   int
 	Chapters   int
 }
