@@ -5,15 +5,14 @@ import (
 	"tsuki/helpers"
 
 	"github.com/tsuki-reader/nisshoku/providers"
-	"gorm.io/gorm"
 )
 
 type InstalledProvider struct {
-	gorm.Model
+	ID           uint   `json:"id" gorm:"primarykey"`
 	Name         string `json:"name"`
-	ProviderId   string `json:"id" gorm:"uniqueIndex:idx_repo_provider"`
-	FileLocation string `json:"file"`
-	Icon         string `json:"icon"`
+	ProviderId   string `json:"provider_id" gorm:"uniqueIndex:idx_repo_provider"`
+	FileLocation string `json:"-"`
+	Icon         string `json:"-"`
 	RepositoryId string `json:"repository_id" gorm:"uniqueIndex:idx_repo_provider"`
 	ProviderType string `json:"provider_type" gorm:"uniqueIndex:idx_repo_provider"`
 }
