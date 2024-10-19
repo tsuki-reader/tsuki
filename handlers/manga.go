@@ -14,8 +14,8 @@ func MangaIndex(c *fiber.Ctx) error {
 	}
 
 	if account.AnilistToken == "" {
-		return c.Status(fiber.StatusUnauthorized).JSON(ResponseError{
-			Error: "You are not authorised.",
+		return c.Status(fiber.StatusForbidden).JSON(ResponseError{
+			Error: "Anilist token not found.",
 		})
 	}
 
@@ -25,6 +25,8 @@ func MangaIndex(c *fiber.Ctx) error {
 	}
 	listCollection, err := anilist.BuildAndSendRequest[al_types.ALMediaListCollectionData](
 		"media_list_collection",
+		account.AnilistToken,
+		nil,
 		varUserName,
 	)
 	if err != nil {

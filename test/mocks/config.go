@@ -8,11 +8,13 @@ func BuildMockConfig(logger *MockLogger, level int) {
 	filePrefix := filepathPrefix(level)
 	config := &core.Config{
 		Server: struct {
-			Host string
-			Port int
+			Host      string
+			Port      int
+			SecretKey string
 		}{
-			Host: "127.0.0.1",
-			Port: 1337,
+			Host:      "127.0.0.1",
+			Port:      1337,
+			SecretKey: "mock_key",
 		},
 		Anilist: struct{ ClientID string }{
 			ClientID: "12345",

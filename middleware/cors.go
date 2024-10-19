@@ -8,7 +8,7 @@ import (
 func corsMiddleware() func(*fiber.Ctx) error {
 	var config = cors.Config{
 		AllowOrigins: "*",
-		AllowHeaders: "Origin, Content-Type, Accept",
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 	}
 
 	return cors.New(config)

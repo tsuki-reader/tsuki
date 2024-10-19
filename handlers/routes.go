@@ -21,6 +21,10 @@ func RegisterRoutes(app *fiber.App) {
 	auth.Post("/register", Register)
 	auth.Post("/login", Login)
 
+	// ========== Anilist
+	api.Get("/anilist/status", AnilistStatus)
+	api.Post("/anilist/login", AnilistLogin)
+
 	// ========== Manga
 	api.Get("/manga", MangaIndex)
 
