@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"tsuki/database"
 	"tsuki/external/anilist"
 	"tsuki/external/anilist/al_types"
 	"tsuki/models"
@@ -36,6 +35,12 @@ func MangaIndex(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(ResponseError{
 			Error: "There was an issue when trying to retrieve the list collection.",
 		})
+	}
+
+	for _, groupList := range listCollection.MediaListCollection.Lists {
+		for _, list := range groupList.Entries {
+			list.SetMangaMapping()
+		}
 	}
 
 	return c.JSON(listCollection.MediaListCollection.Lists)
@@ -79,12 +84,7 @@ func MangaShow(c *fiber.Ctx) error {
 	}
 
 	// Get the manga mapping for this manga
-	var mapping *models.MangaMapping
-	result := database.DATABASE.Where(&models.MangaMapping{AnilistID: mediaList.MediaList.Media.Id}).First(&mapping)
-	if result.Error != nil {
-		mapping = nil
-	}
-	mediaList.MediaList.Mapping = mapping
+	mediaList.MediaList.SetMangaMapping()
 
 	// TODO: Add recommendations and maybe character, staff + relations
 	return c.JSON(mediaList.MediaList)
