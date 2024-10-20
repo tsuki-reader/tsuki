@@ -14,9 +14,11 @@ type _token struct {
 }
 
 func AnilistLogin(c *fiber.Ctx) error {
-	account, response := getLocalAccount(c)
-	if response != nil {
-		return response
+	account := getLocalAccount(c)
+	if account == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(ResponseError{
+			Error: "Token invalid",
+		})
 	}
 
 	token := new(_token)
@@ -53,9 +55,11 @@ func AnilistLogin(c *fiber.Ctx) error {
 }
 
 func AnilistStatus(c *fiber.Ctx) error {
-	account, response := getLocalAccount(c)
-	if response != nil {
-		return response
+	account := getLocalAccount(c)
+	if account == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(ResponseError{
+			Error: "Token invalid",
+		})
 	}
 
 	authenticated := false

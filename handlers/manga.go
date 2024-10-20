@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"tsuki/database"
 	"tsuki/external/anilist"
 	"tsuki/external/anilist/al_types"
 	"tsuki/models"
@@ -9,12 +10,15 @@ import (
 )
 
 func MangaIndex(c *fiber.Ctx) error {
-	account, response := getLocalAccount(c)
-	if response != nil {
-		return response
+	account := getLocalAccount(c)
+	if account == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(ResponseError{
+			Error: "Token invalid",
+		})
 	}
 
-	if err := verifyAnilistToken(c, *account); err != nil {
+	performed, err := verifyAnilistToken(c, *account)
+	if performed {
 		return err
 	}
 
@@ -38,19 +42,21 @@ func MangaIndex(c *fiber.Ctx) error {
 }
 
 func MangaShow(c *fiber.Ctx) error {
-	account, response := getLocalAccount(c)
-	if response != nil {
-		return response
+	account := getLocalAccount(c)
+	if account == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(ResponseError{
+			Error: "Token invalid",
+		})
 	}
 
-	if err := verifyAnilistToken(c, *account); err != nil {
+	performed, err := verifyAnilistToken(c, *account)
+	if performed {
 		return err
 	}
 
 	mangaId := c.Params("id")
 
 	// Get the manga from Anilist
-	// TODO: Also retrieve the manga mapping if one exists
 	varUserName := anilist.GraphQLVariable{
 		Key:   "userName",
 		Value: account.AnilistName,
@@ -72,15 +78,23 @@ func MangaShow(c *fiber.Ctx) error {
 		})
 	}
 
+	// Get the manga mapping for this manga
+	var mapping *models.MangaMapping
+	result := database.DATABASE.Where(&models.MangaMapping{AnilistID: mediaList.MediaList.Media.Id}).First(&mapping)
+	if result.Error != nil {
+		mapping = nil
+	}
+	mediaList.MediaList.Mapping = mapping
+
 	// TODO: Add recommendations and maybe character, staff + relations
 	return c.JSON(mediaList.MediaList)
 }
 
-func verifyAnilistToken(c *fiber.Ctx, account models.Account) error {
+func verifyAnilistToken(c *fiber.Ctx, account models.Account) (bool, error) {
 	if account.AnilistToken == "" {
-		return c.Status(fiber.StatusForbidden).JSON(ResponseError{
+		return true, c.Status(fiber.StatusForbidden).JSON(ResponseError{
 			Error: "Anilist token not found.",
 		})
 	}
-	return nil
+	return false, nil
 }

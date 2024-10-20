@@ -42,14 +42,12 @@ func RegisterRoutes(app *fiber.App) {
 	api.Delete("/providers/:id", ProvidersDestroy)
 }
 
-func getLocalAccount(c *fiber.Ctx) (*models.Account, error) {
+func getLocalAccount(c *fiber.Ctx) *models.Account {
 	local := c.Locals("account")
 	account, ok := local.(*models.Account)
 	if !ok {
-		return nil, c.Status(fiber.StatusUnauthorized).JSON(ResponseError{
-			Error: "Token invalid",
-		})
+		return nil
 	}
 
-	return account, nil
+	return account
 }

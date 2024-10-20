@@ -14,9 +14,9 @@ type _body struct {
 
 func Register(c *fiber.Ctx) error {
 	account := models.Account{}
-	response := parseBody(&account, c, &_body{})
-	if response != nil {
-		return response
+	performed, err := parseBody(&account, c, &_body{})
+	if performed {
+		return err
 	}
 
 	if err := database.DATABASE.Create(&account).Error; err != nil {
@@ -40,9 +40,9 @@ func Register(c *fiber.Ctx) error {
 
 func Login(c *fiber.Ctx) error {
 	body := _body{}
-	response := parseBody(&models.Account{}, c, &body)
-	if response != nil {
-		return response
+	performed, err := parseBody(&models.Account{}, c, &body)
+	if performed {
+		return err
 	}
 
 	actualAccount := models.Account{}
@@ -72,15 +72,15 @@ func Login(c *fiber.Ctx) error {
 	return c.JSON(data)
 }
 
-func parseBody(account *models.Account, c *fiber.Ctx, body *_body) error {
+func parseBody(account *models.Account, c *fiber.Ctx, body *_body) (bool, error) {
 	if err := c.BodyParser(body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(ResponseError{
+		return true, c.Status(fiber.StatusBadRequest).JSON(ResponseError{
 			Error: "An error occurred. Ensure that you are including the username and password in the JSON body.",
 		})
 	}
 
 	if body.Username == "" || body.Password == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(ResponseError{
+		return true, c.Status(fiber.StatusBadRequest).JSON(ResponseError{
 			Error: "An error occurred. Ensure that you are including the username and password in the JSON body.",
 		})
 	}
@@ -88,7 +88,7 @@ func parseBody(account *models.Account, c *fiber.Ctx, body *_body) error {
 	username := body.Username
 	password, err := models.HashPassword(body.Password)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(ResponseError{
+		return true, c.Status(fiber.StatusInternalServerError).JSON(ResponseError{
 			Error: "Could not hash password.",
 		})
 	}
@@ -96,5 +96,5 @@ func parseBody(account *models.Account, c *fiber.Ctx, body *_body) error {
 	account.Username = username
 	account.Password = password
 
-	return nil
+	return false, nil
 }

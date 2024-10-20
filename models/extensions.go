@@ -10,11 +10,11 @@ import (
 type InstalledProvider struct {
 	ID           uint   `json:"id" gorm:"primarykey"`
 	Name         string `json:"name"`
-	ProviderId   string `json:"provider_id" gorm:"uniqueIndex:idx_repo_provider"`
+	ProviderId   string `json:"providerId" gorm:"uniqueIndex:idx_repo_provider"`
 	FileLocation string `json:"-"`
 	Icon         string `json:"-"`
-	RepositoryId string `json:"repository_id" gorm:"uniqueIndex:idx_repo_provider"`
-	ProviderType string `json:"provider_type" gorm:"uniqueIndex:idx_repo_provider"`
+	RepositoryId string `json:"repositoryId" gorm:"uniqueIndex:idx_repo_provider"`
+	ProviderType string `json:"providerType" gorm:"uniqueIndex:idx_repo_provider"`
 }
 
 func (ip *InstalledProvider) ScriptContents() (string, error) {
