@@ -14,3 +14,6 @@
     Self-hosted manga/comic reader for astronaughts.
   </p>
 </div>
+
+> [!WARNING]  
+> Tsuki is not yet in a usable state. There aren't any working providers, and the API is not yet fully built. You can try to build the project and contribute if you'd like :)
