@@ -9,7 +9,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.20.2
 	github.com/onsi/gomega v1.34.2
 	github.com/traefik/yaegi v0.16.1
-	github.com/tsuki-reader/nisshoku v0.0.0-20241016194912-a57917472f66
+	github.com/tsuki-reader/nisshoku v0.0.0-20241108161951-d906af36048f
 	golang.org/x/crypto v0.28.0
 	gopkg.in/ini.v1 v1.67.0
 	gorm.io/driver/sqlite v1.5.6
