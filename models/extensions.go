@@ -61,8 +61,8 @@ func (ip *InstalledProvider) GetFirstSearchResult(query string) (*providers.Prov
 	return nil, nil
 }
 
-func (ip *InstalledProvider) GetChapterList(providerResult *providers.ProviderResult) ([]providers.Chapter, error) {
-	if providerResult == nil {
+func (ip *InstalledProvider) GetChapterList(externalId string) ([]providers.Chapter, error) {
+	if externalId == "" {
 		return []providers.Chapter{}, nil
 	}
 
@@ -71,7 +71,7 @@ func (ip *InstalledProvider) GetChapterList(providerResult *providers.ProviderRe
 		return []providers.Chapter{}, err
 	}
 
-	chapters, err := provider.GetChapters(providerResult.ID)
+	chapters, err := provider.GetChapters(externalId)
 	if err != nil {
 		return []providers.Chapter{}, err
 	}

@@ -7,6 +7,7 @@ import (
 	"tsuki/models"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/tsuki-reader/nisshoku/providers"
 	"gorm.io/gorm/clause"
 )
 
@@ -74,8 +75,19 @@ func MangaShow(c *fiber.Ctx) error {
 	// Get the manga mapping for this manga
 	mediaList.MediaList.SetMangaMapping(*account)
 
+	// Get the chapter list and send it in the response
+	chapterList := []providers.Chapter{}
+	if mediaList.MediaList.Mapping != nil {
+		chapterList, _ = mediaList.MediaList.Mapping.InstalledProvider.GetChapterList(mediaList.MediaList.Mapping.ExternalID)
+	}
+
+	data := fiber.Map{
+		"mediaList": mediaList.MediaList,
+		"chapters": chapterList
+	}
+
 	// TODO: Add recommendations and maybe character, staff + relations
-	return c.JSON(mediaList.MediaList)
+	return c.JSON(data)
 }
 
 func MangaAssignMapping(c *fiber.Ctx) error {
@@ -125,7 +137,7 @@ func MangaAssignMapping(c *fiber.Ctx) error {
 		externalId = providerResult.ID
 	}
 	chapterCount := mediaList.MediaList.HighestPossibleChapterCount()
-	chapterList, _ := installedProvider.GetChapterList(providerResult)
+	chapterList, _ := installedProvider.GetChapterList(externalId)
 	providerChapterCount := len(chapterList)
 	if chapterCount < providerChapterCount {
 		chapterCount = providerChapterCount
