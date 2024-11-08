@@ -83,7 +83,7 @@ func MangaShow(c *fiber.Ctx) error {
 
 	data := fiber.Map{
 		"mediaList": mediaList.MediaList,
-		"chapters": chapterList
+		"chapters":  chapterList,
 	}
 
 	// TODO: Add recommendations and maybe character, staff + relations
