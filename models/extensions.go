@@ -45,3 +45,36 @@ func (ip *InstalledProvider) Load() (providers.Provider, error) {
 
 	return provider, nil
 }
+
+// Get the first search result from this provider. Only returns nil in cases where the provider fails to load.
+func (ip *InstalledProvider) GetFirstSearchResult(query string) (*providers.ProviderResult, error) {
+	provider, err := ip.Load()
+	if err != nil {
+		return nil, err
+	}
+
+	searchResults, err := provider.Search(query)
+	if len(searchResults) > 0 {
+		return &searchResults[0], nil
+	}
+
+	return nil, nil
+}
+
+func (ip *InstalledProvider) GetChapterList(providerResult *providers.ProviderResult) ([]providers.Chapter, error) {
+	if providerResult == nil {
+		return []providers.Chapter{}, nil
+	}
+
+	provider, err := ip.Load()
+	if err != nil {
+		return []providers.Chapter{}, err
+	}
+
+	chapters, err := provider.GetChapters(providerResult.ID)
+	if err != nil {
+		return []providers.Chapter{}, err
+	}
+
+	return chapters, nil
+}

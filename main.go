@@ -6,7 +6,6 @@ import (
 
 	"tsuki/core"
 	"tsuki/database"
-	"tsuki/extensions/yaegi_interp"
 	"tsuki/handlers"
 	"tsuki/jobs"
 	"tsuki/middleware"
@@ -19,7 +18,6 @@ var webFS embed.FS
 
 func main() {
 	core.SetupConfig()
-	yaegi_interp.SetupInterp()
 
 	database.Connect()
 	database.Migrate()

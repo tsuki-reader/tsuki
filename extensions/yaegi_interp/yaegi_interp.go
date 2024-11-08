@@ -8,9 +8,7 @@ import (
 	"github.com/traefik/yaegi/stdlib"
 )
 
-var INTERP *interp.Interpreter
-
-func SetupInterp() {
+func Newnterp() *interp.Interpreter {
 	i := interp.New(interp.Options{Unrestricted: false})
 
 	symbols := stdlib.Symbols
@@ -29,16 +27,17 @@ func SetupInterp() {
 	i.Use(symbols)
 	i.Use(yaegi_extract.Symbols)
 
-	INTERP = i
+	return i
 }
 
 func EvaluateProvider(script string) (reflect.Value, error) {
-	_, err := INTERP.Eval(script)
+	interpreter := Newnterp()
+	_, err := interpreter.Eval(script)
 	if err != nil {
 		return reflect.Value{}, err
 	}
 
-	v, err := INTERP.Eval("main.NewProvider")
+	v, err := interpreter.Eval("main.NewProvider")
 	if err != nil {
 		return reflect.Value{}, err
 	}
