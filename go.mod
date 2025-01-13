@@ -16,7 +16,7 @@ require (
 	golang.org/x/crypto v0.32.0
 	golang.org/x/net v0.34.0
 	gopkg.in/ini.v1 v1.67.0
-	gorm.io/driver/sqlite v1.5.6
+	gorm.io/driver/sqlite v1.5.7
 	gorm.io/gorm v1.25.12
 )
 
