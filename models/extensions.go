@@ -1,6 +1,7 @@
 package models
 
 import (
+	"slices"
 	"tsuki/extensions/yaegi_interp"
 	"tsuki/helpers"
 
@@ -75,6 +76,9 @@ func (ip *InstalledProvider) GetChapterList(externalId string) ([]providers.Chap
 	if err != nil {
 		return []providers.Chapter{}, err
 	}
+	slices.SortFunc(chapters, func(a, b providers.Chapter) int {
+		return a.AbsoluteNumber - b.AbsoluteNumber
+	})
 
 	return chapters, nil
 }
