@@ -215,7 +215,13 @@ func MangaChapterPages(c *fiber.Ctx) error {
 			Error: "Could not get chapter pages.",
 		})
 	}
-	return c.JSON(pages)
+
+	data := fiber.Map{
+		"pages":                 pages,
+		"installed_provider_id": installedProvider.ID,
+	}
+
+	return c.JSON(data)
 }
 
 func verifyAnilistToken(c *fiber.Ctx, account models.Account) (bool, error) {

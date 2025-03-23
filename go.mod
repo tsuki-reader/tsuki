@@ -12,7 +12,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.22.2
 	github.com/onsi/gomega v1.36.2
 	github.com/traefik/yaegi v0.16.1
-	github.com/tsuki-reader/nisshoku v0.0.0-20241108161951-d906af36048f
+	github.com/tsuki-reader/nisshoku v0.0.0-20250323144904-2601c3db0163
 	golang.org/x/crypto v0.32.0
 	golang.org/x/net v0.34.0
 	gopkg.in/ini.v1 v1.67.0
