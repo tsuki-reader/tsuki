@@ -82,3 +82,21 @@ func (ip *InstalledProvider) GetChapterList(externalId string) ([]providers.Chap
 
 	return chapters, nil
 }
+
+func (ip *InstalledProvider) GetChapterPages(chapterId string) ([]providers.Page, error) {
+	if chapterId == "" {
+		return []providers.Page{}, nil
+	}
+
+	provider, err := ip.Load()
+	if err != nil {
+		return []providers.Page{}, err
+	}
+
+	pages, err := provider.GetChapterPages(chapterId)
+	if err != nil {
+		return []providers.Page{}, err
+	}
+
+	return pages, nil
+}

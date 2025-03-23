@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"strconv"
 	"tsuki/database"
 	"tsuki/external/anilist"
 	"tsuki/external/anilist/al_types"
@@ -171,6 +172,50 @@ func MangaAssignMapping(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(data)
+}
+
+func MangaChapterPages(c *fiber.Ctx) error {
+	account := getLocalAccount(c)
+	if account == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(ResponseError{
+			Error: "Token invalid",
+		})
+	}
+
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(ResponseError{
+			Error: "Invalid manga ID.",
+		})
+	}
+	chapterId := c.Query("chapter_id", "")
+	if chapterId == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(ResponseError{
+			Error: "Invalid chapter ID.",
+		})
+	}
+
+	var mapping *models.MangaMapping
+	result := database.
+		DATABASE.
+		Preload("InstalledProvider").
+		Preload("Account").
+		Where(&models.MangaMapping{AnilistID: id, AccountID: account.ID}).
+		First(&mapping)
+	if result.Error != nil {
+		return c.Status(fiber.StatusNotFound).JSON(&ResponseError{
+			Error: "Could not mapping for manga.",
+		})
+	}
+
+	installedProvider := mapping.InstalledProvider
+	pages, err := installedProvider.GetChapterPages(chapterId)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(&ResponseError{
+			Error: "Could not get chapter pages.",
+		})
+	}
+	return c.JSON(pages)
 }
 
 func verifyAnilistToken(c *fiber.Ctx, account models.Account) (bool, error) {
