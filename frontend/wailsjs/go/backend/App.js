@@ -9,3 +9,7 @@ export function DomReady(arg1) {
 export function SignIn(arg1, arg2) {
   return window['go']['backend']['App']['SignIn'](arg1, arg2);
 }
+
+export function SignOut() {
+  return window['go']['backend']['App']['SignOut']();
+}

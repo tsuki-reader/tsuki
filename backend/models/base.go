@@ -13,13 +13,8 @@ func (b *Base) Where(conditions map[string]interface{}) *gorm.DB {
 	return DATABASE.Where(conditions)
 }
 
-func (b *Base) Find(id uint) (*Base, error) {
-	var record Base
-	err := DATABASE.First(&record, id).Error
-	if err != nil {
-		return nil, err
-	}
-	return &record, nil
+func (b *Base) Find(id uint, out interface{}) error {
+	return DATABASE.First(out, id).Error
 }
 
 func (b *Base) Preload(associations ...string) *gorm.DB {

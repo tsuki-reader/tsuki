@@ -4,11 +4,14 @@ import { faPuzzlePiece, faRightFromBracket } from '@fortawesome/free-solid-svg-i
 import { NavLink } from './NavLink'
 import { Logo } from '../svg/logo'
 import { NavLinkIcon } from './NavLinkIcon'
+import { SignOut } from '../../../wailsjs/go/backend/App'
 
 export function Nav () {
   const logout = () => {
-    localStorage.setItem('tsuki_account', '')
-    window.location.href = '/'
+    SignOut().then(() => {
+        localStorage.setItem('tsuki_account', '')
+        window.location.href = '/'
+    })
   }
 
   return (
