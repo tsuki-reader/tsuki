@@ -27,10 +27,6 @@ go.work.sum
 # Database files
 *.db
 
-# Web builds
-web/*
-!web/.keep
-
-# Test output files
-test/dump/*
-!test/dump/.keep
+build/bin
+node_modules
+frontend/dist
