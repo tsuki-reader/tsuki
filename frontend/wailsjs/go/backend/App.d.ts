@@ -13,6 +13,8 @@ export function DomReady(arg1:context.Context):Promise<void>;
 
 export function MangaIndex():Promise<Array<types.ALMediaListGroup>>;
 
+export function MangaShow(arg1:number):Promise<backend.MangaShowResponse>;
+
 export function SignIn(arg1:string,arg2:string):Promise<models.Account>;
 
 export function SignOut():Promise<void>;

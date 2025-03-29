@@ -11,7 +11,8 @@
   "dependencies": {
     "next": "15.2.3",
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "sanitize-html": "^2.15.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.15",
@@ -26,7 +27,8 @@
     "typescript": "^5",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
-    "@fortawesome/react-fontawesome": "^0.2.2"
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@types/sanitize-html": "^2.15.0"
   },
   "author": "Tanveer Najib"
 }

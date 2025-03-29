@@ -18,6 +18,10 @@ export function MangaIndex() {
   return window['go']['backend']['App']['MangaIndex']();
 }
 
+export function MangaShow(arg1) {
+  return window['go']['backend']['App']['MangaShow'](arg1);
+}
+
 export function SignIn(arg1, arg2) {
   return window['go']['backend']['App']['SignIn'](arg1, arg2);
 }

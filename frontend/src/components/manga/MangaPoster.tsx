@@ -21,7 +21,7 @@ export function MangaPoster ({ entry }: Props) {
   return (
     <Link href={`/manga/entry?id=${entry.media.id}`}>
       <div className="flex flex-col gap-3 cursor-pointer h-full group">
-        <div className="p-2 group-hover:rotate-2 relative aspect-[6/8] transition-all duration-100 ease-in-out">
+        <div className="p-2 group-hover:rotate-2 group-hover:scale-105 relative aspect-[6/8] transition-all duration-100 ease-in-out">
           <div className="relative col-span-1 w-full h-full bg-cover bg-center rounded overflow-hidden border-2 border-foreground" style={{ backgroundImage: `url(${entry.media.coverImage.large})` }}>
             <div className="absolute bottom-0 left-0 w-full h-2 bg-foreground" style={{ width: entryPercentage() }}></div>
             {amountRemaining() > 0 &&
