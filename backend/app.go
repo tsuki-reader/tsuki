@@ -2,11 +2,13 @@ package backend
 
 import (
 	"context"
+	"tsuki/backend/models"
 )
 
 // App struct
 type App struct {
-	ctx context.Context
+	CurrentAccount *models.Account
+	ctx            context.Context
 }
 
 // NewApp creates a new App application struct
@@ -35,4 +37,13 @@ func (a *App) BeforeClose(ctx context.Context) (prevent bool) {
 // shutdown is called at application termination
 func (a *App) Shutdown(ctx context.Context) {
 	// Perform your teardown here
+}
+
+func (a *App) SignIn(username string, password string) (*models.Account, error) {
+	account, err := models.Authenticate(username, password)
+	if err != nil {
+		return nil, err
+	}
+	a.CurrentAccount = account
+	return account, nil
 }

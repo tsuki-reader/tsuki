@@ -4,6 +4,7 @@ import (
 	"embed"
 	"log"
 	"tsuki/backend"
+	"tsuki/backend/models"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -20,6 +21,8 @@ var assets embed.FS
 var icon []byte
 
 func main() {
+	models.Connect()
+
 	// Create an instance of the app structure
 	app := backend.NewApp()
 
