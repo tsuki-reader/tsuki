@@ -5,10 +5,10 @@ import (
 	"tsuki/database"
 	"tsuki/external/anilist"
 	"tsuki/external/anilist/al_types"
+	"tsuki/jobs"
 	"tsuki/models"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/tsuki-reader/nisshoku/providers"
 	"gorm.io/gorm/clause"
 )
 
@@ -77,9 +77,10 @@ func MangaShow(c *fiber.Ctx) error {
 	mediaList.MediaList.SetMangaMapping(*account)
 
 	// Get the chapter list and send it in the response
-	chapterList := []providers.Chapter{}
+	chapterList := []models.Chapter{}
 	if mediaList.MediaList.Mapping != nil {
-		chapterList, _ = mediaList.MediaList.Mapping.InstalledProvider.GetChapterList(mediaList.MediaList.Mapping.ExternalID)
+		// TODO: This should not be doing this. We should instead hit the database directly.
+		chapterList, _ = jobs.RetrieveChaptersForMapping(*mediaList.MediaList.Mapping)
 	}
 
 	data := fiber.Map{
@@ -166,9 +167,11 @@ func MangaAssignMapping(c *fiber.Ctx) error {
 
 	mediaList.MediaList.Mapping = &mapping
 
+	chapters, _ := jobs.RetrieveChaptersForMapping(mapping)
+
 	data := fiber.Map{
 		"mediaList": mediaList.MediaList,
-		"chapters":  chapterList,
+		"chapters":  chapters,
 	}
 
 	return c.JSON(data)

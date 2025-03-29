@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"os"
+	"tsuki/core"
 )
 
 func FileExists(file string) bool {
@@ -32,6 +33,7 @@ func CreateDirectory(location string) error {
 func ReadFileContents(file string) (string, error) {
 	contents, err := os.ReadFile(file)
 	if err != nil {
+		core.CONFIG.Logger.Println(file)
 		return "", err
 	}
 

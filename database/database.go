@@ -28,6 +28,7 @@ func Migrate() {
 		&models.Account{},
 		&models.MangaMapping{},
 		&models.InstalledProvider{},
+		&models.Chapter{},
 	)
 }
 

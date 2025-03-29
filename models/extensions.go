@@ -2,6 +2,7 @@ package models
 
 import (
 	"slices"
+	"tsuki/core"
 	"tsuki/extensions/yaegi_interp"
 	"tsuki/helpers"
 
@@ -19,6 +20,7 @@ type InstalledProvider struct {
 }
 
 func (ip *InstalledProvider) ScriptContents() (string, error) {
+	core.CONFIG.Logger.Println(ip.FileLocation)
 	return helpers.ReadFileContents(ip.FileLocation)
 }
 

@@ -1,0 +1,15 @@
+API endpoint that just retrieves the media collection lists
+
+When getting specific manga
+- When manga mapping does not exist
+    - Creating a manga mapping, set provider to filesystem
+    - Search using the filesystem provider, and get the first match. Set the path as the Provider ID
+    - Scan the filesystem and set the manga mapping chapter count to the amount found in the provider
+        - When scanning, store the ProviderChapters in the database -> media id, provider, provider id, chapter number, title, date stamp, provider chapter id etc
+- When manga mapping exists
+    - Return the ProviderChapters from the manga mapping 
+Return the necessary details from Anilist
+
+When accessing the chapter, send the ProviderChapter id from the front end and using the provider chapter id will scrape the chapter images and send it to the frontend
+
+Background job that will loop through all manga mappings and re-scrape them for new chapters
