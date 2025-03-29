@@ -27,6 +27,11 @@ export default function RootLayout ({
 }>) {
   return (
     <html lang="en">
+      <head>
+		<meta name="wails-options" content="noautoinject" />
+		<script src="/wails/ipc.js" async></script>
+		<script src="/wails/runtime.js" async></script>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

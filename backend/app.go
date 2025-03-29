@@ -2,8 +2,6 @@ package backend
 
 import (
 	"context"
-	"encoding/json"
-	"os"
 	"tsuki/backend/models"
 )
 
@@ -58,48 +56,4 @@ func (a *App) Shutdown(ctx context.Context) {
 	if a.CurrentAccount != nil {
 		saveUserID(a.CurrentAccount.ID)
 	}
-}
-
-func (a *App) SignIn(username string, password string) (*models.Account, error) {
-	account, err := models.Authenticate(username, password)
-	if err != nil {
-		return nil, err
-	}
-	a.CurrentAccount = account
-	saveUserID(account.ID)
-	return account, nil
-}
-
-func (a *App) SignOut() {
-	a.CurrentAccount = nil
-	saveUserID(0)
-}
-
-func saveUserID(userID uint) error {
-	data := SessionData{UserID: userID}
-	file, err := os.Create("session.json")
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	encoder := json.NewEncoder(file)
-	return encoder.Encode(data)
-}
-
-func loadUserID() (uint, error) {
-	file, err := os.Open("session.json")
-	if err != nil {
-		return 0, err
-	}
-	defer file.Close()
-
-	var data SessionData
-	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&data)
-	if err != nil {
-		return 0, err
-	}
-
-	return data.UserID, nil
 }

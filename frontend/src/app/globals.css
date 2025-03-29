@@ -18,58 +18,60 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-@layer utilities {
-    .text-balance {
-        text-wrap: balance;
-    }
+.text-balance {
+    text-wrap: balance;
+}
 
-    .logo {
-        fill: rgb(var(--foreground));
-    }
+.logo {
+    fill: rgb(var(--foreground));
+}
 
-    /* Webkit scrollbar styles */
-    ::-webkit-scrollbar {
-        width: 4px;
-        height: 4px;
-    }
+summary::marker {
+    display: none;
+}
 
-    ::-webkit-scrollbar-track {
-        background: rgb(var(--background));
-        border-radius: 5px;
-    }
+/* Webkit scrollbar styles */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
 
-    ::-webkit-scrollbar-thumb {
-        background: rgb(var(--foreground));
-        border-radius: 5px;
-    }
+::-webkit-scrollbar-track {
+    background: rgb(var(--background));
+    border-radius: 5px;
+}
 
-    ::-webkit-scrollbar-thumb:hover {
-        background: rgb(var(--foreground));
-    }
+::-webkit-scrollbar-thumb {
+    background: rgb(var(--foreground));
+    border-radius: 5px;
+}
 
-    /* Non-webkit scrollbar styles */
-    * {
-        scrollbar-width: thin;
-        scrollbar-color: rgb(var(--foreground)) transparent;
-    }
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--foreground));
+}
 
-    /* TODO: Use Tailwind */
-    .bg-overlay::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(
-            var(--background-with-commas),
-            0.3
-        ); /* Blue tint with 30% opacity */
-        pointer-events: none; /* Allows interaction with the content below */
-    }
+/* Non-webkit scrollbar styles */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--foreground)) transparent;
+}
 
-    .bg-overlay {
-        filter: brightness(35%) blur(5px);
-        transition: background-image 1s ease-in-out;
-    }
+/* TODO: Use Tailwind */
+.bg-overlay::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(
+        var(--background-with-commas),
+        0.3
+    ); /* Blue tint with 30% opacity */
+    pointer-events: none; /* Allows interaction with the content below */
+}
+
+.bg-overlay {
+    filter: brightness(35%) blur(5px);
+    transition: background-image 1s ease-in-out;
 }

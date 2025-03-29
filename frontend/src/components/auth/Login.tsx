@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { FullscreenCenter } from '../FullscreenCenter'
-import { Logo } from '../svg/logo'
+import { Logo } from '../svg/Logo'
 import { usePathname } from 'next/navigation'
 import { ErrorMessage } from '../ErrorMessage'
 import { SignIn } from '../../../wailsjs/go/backend/App'

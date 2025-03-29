@@ -7,5 +7,14 @@
   "author": {
     "name": "crxssed",
     "email": "crxssed7@gmail.com"
+  },
+  "info": {
+    "protocols": [
+      {
+        "scheme": "tsuki",
+        "description": "Tsuki Protocol",
+        "role": "None"
+      }
+    ]
   }
 }

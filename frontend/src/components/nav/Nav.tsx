@@ -2,7 +2,7 @@
 
 import { faPuzzlePiece, faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import { NavLink } from './NavLink'
-import { Logo } from '../svg/logo'
+import { Logo } from '../svg/Logo'
 import { NavLinkIcon } from './NavLinkIcon'
 import { SignOut } from '../../../wailsjs/go/backend/App'
 
@@ -19,8 +19,8 @@ export function Nav () {
         <div className="flex gap-2 items-center">
             <Logo width={50} height={50} className="mr-4" />
             <NavLink text="Dashboard" href="/" />
-            <NavLink text="Manga" href="/manga" />
-            <NavLink text="Comics" href="/comics" />
+            <NavLink text="Manga" href="/manga/" />
+            <NavLink text="Comics" href="/comics/" />
         </div>
 
         <div className="flex gap-2 items-center">

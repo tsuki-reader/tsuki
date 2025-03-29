@@ -13,7 +13,7 @@ export function NavLink ({ text, href }: Props) {
 
   const classes = () => {
     console.log(pathname)
-    return pathname === href ? 'text-foreground bg-foreground/10' : 'text-foreground/75 hover:text-foreground hover:bg-foreground/10'
+    return pathname.replaceAll('/', '') === href.replaceAll('/', '') ? 'text-foreground bg-foreground/10' : 'text-foreground/75 hover:text-foreground hover:bg-foreground/10'
   }
 
   return (
