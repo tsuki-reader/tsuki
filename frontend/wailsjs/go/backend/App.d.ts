@@ -10,7 +10,11 @@ export function AnilistLogin(arg1:string):Promise<backend.LoginStatus>;
 
 export function AnilistStatus():Promise<backend.AnilistStatus>;
 
+export function AssignMapping(arg1:string,arg2:number):Promise<backend.MappingAssignResponse>;
+
 export function DomReady(arg1:context.Context):Promise<void>;
+
+export function MangaChapterPages(arg1:number,arg2:string):Promise<backend.MappingChapterPagesResponse>;
 
 export function MangaIndex():Promise<Array<types.ALMediaListGroup>>;
 

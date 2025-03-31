@@ -9,7 +9,7 @@ import (
 )
 
 type InstalledProvider struct {
-	ID           uint   `json:"id" gorm:"primarykey"`
+	Base
 	Name         string `json:"name"`
 	ProviderId   string `json:"providerId" gorm:"uniqueIndex:idx_repo_provider"`
 	FileLocation string `json:"-"`

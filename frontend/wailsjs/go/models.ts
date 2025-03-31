@@ -50,6 +50,7 @@ export namespace backend {
 	}
 	export class MangaShowResponse {
 	    media_list?: types.ALMediaList;
+	    chapters: models.Chapter[];
 	
 	    static createFrom(source: any = {}) {
 	        return new MangaShowResponse(source);
@@ -58,6 +59,71 @@ export namespace backend {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.media_list = this.convertValues(source["media_list"], types.ALMediaList);
+	        this.chapters = this.convertValues(source["chapters"], models.Chapter);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class MappingAssignResponse {
+	    media_list: types.ALMediaList;
+	    chapters: models.Chapter[];
+	
+	    static createFrom(source: any = {}) {
+	        return new MappingAssignResponse(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.media_list = this.convertValues(source["media_list"], types.ALMediaList);
+	        this.chapters = this.convertValues(source["chapters"], models.Chapter);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class MappingChapterPagesResponse {
+	    pages: providers.Page[];
+	    installed_provider: models.InstalledProvider;
+	
+	    static createFrom(source: any = {}) {
+	        return new MappingChapterPagesResponse(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.pages = this.convertValues(source["pages"], providers.Page);
+	        this.installed_provider = this.convertValues(source["installed_provider"], models.InstalledProvider);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -194,7 +260,13 @@ export namespace models {
 		}
 	}
 	export class InstalledProvider {
-	    id: number;
+	    ID: number;
+	    // Go type: time
+	    CreatedAt: any;
+	    // Go type: time
+	    UpdatedAt: any;
+	    // Go type: gorm
+	    DeletedAt: any;
 	    name: string;
 	    providerId: string;
 	    repositoryId: string;
@@ -206,11 +278,152 @@ export namespace models {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.id = source["id"];
+	        this.ID = source["ID"];
+	        this.CreatedAt = this.convertValues(source["CreatedAt"], null);
+	        this.UpdatedAt = this.convertValues(source["UpdatedAt"], null);
+	        this.DeletedAt = this.convertValues(source["DeletedAt"], null);
 	        this.name = source["name"];
 	        this.providerId = source["providerId"];
 	        this.repositoryId = source["repositoryId"];
 	        this.providerType = source["providerType"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class Chapter {
+	    ID: number;
+	    // Go type: time
+	    CreatedAt: any;
+	    // Go type: time
+	    UpdatedAt: any;
+	    // Go type: gorm
+	    DeletedAt: any;
+	    title: string;
+	    external_id: string;
+	    provider: string;
+	    absolute_number: number;
+	    installed_provider: InstalledProvider;
+	
+	    static createFrom(source: any = {}) {
+	        return new Chapter(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ID = source["ID"];
+	        this.CreatedAt = this.convertValues(source["CreatedAt"], null);
+	        this.UpdatedAt = this.convertValues(source["UpdatedAt"], null);
+	        this.DeletedAt = this.convertValues(source["DeletedAt"], null);
+	        this.title = source["title"];
+	        this.external_id = source["external_id"];
+	        this.provider = source["provider"];
+	        this.absolute_number = source["absolute_number"];
+	        this.installed_provider = this.convertValues(source["installed_provider"], InstalledProvider);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
+	export class Mapping {
+	    ID: number;
+	    // Go type: time
+	    CreatedAt: any;
+	    // Go type: time
+	    UpdatedAt: any;
+	    // Go type: gorm
+	    DeletedAt: any;
+	    anilistId: number;
+	    externalId: string;
+	    progress: number;
+	    chapters: number;
+	    installedProvider: InstalledProvider;
+	
+	    static createFrom(source: any = {}) {
+	        return new Mapping(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ID = source["ID"];
+	        this.CreatedAt = this.convertValues(source["CreatedAt"], null);
+	        this.UpdatedAt = this.convertValues(source["UpdatedAt"], null);
+	        this.DeletedAt = this.convertValues(source["DeletedAt"], null);
+	        this.anilistId = source["anilistId"];
+	        this.externalId = source["externalId"];
+	        this.progress = source["progress"];
+	        this.chapters = source["chapters"];
+	        this.installedProvider = this.convertValues(source["installedProvider"], InstalledProvider);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+
+}
+
+export namespace providers {
+	
+	export class Page {
+	    provider: string;
+	    image_url: string;
+	    page_number: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Page(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.provider = source["provider"];
+	        this.image_url = source["image_url"];
+	        this.page_number = source["page_number"];
 	    }
 	}
 
@@ -338,6 +551,7 @@ export namespace types {
 	    score: number;
 	    status: string;
 	    media: ALManga;
+	    mapping?: models.Mapping;
 	
 	    static createFrom(source: any = {}) {
 	        return new ALMediaList(source);
@@ -352,6 +566,7 @@ export namespace types {
 	        this.score = source["score"];
 	        this.status = source["status"];
 	        this.media = this.convertValues(source["media"], ALManga);
+	        this.mapping = this.convertValues(source["mapping"], models.Mapping);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

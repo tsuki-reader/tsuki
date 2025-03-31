@@ -4,10 +4,13 @@ import (
 	"errors"
 	"tsuki/backend/anilist"
 	"tsuki/backend/anilist/types"
+	"tsuki/backend/jobs"
+	"tsuki/backend/models"
 )
 
 type MangaShowResponse struct {
 	MediaList *types.ALMediaList `json:"media_list"`
+	Chapters  []models.Chapter   `json:"chapters"`
 }
 
 func (a *App) MangaIndex() ([]types.ALMediaListGroup, error) {
@@ -64,17 +67,18 @@ func (a *App) MangaShow(id int) (*MangaShowResponse, error) {
 		return nil, errors.New("There was an issue when trying to retrieve the list.")
 	}
 
-	// mediaList.MediaList.SetMangaMapping(*account)
-	//
+	mediaList.MediaList.SetMapping(*a.CurrentAccount)
+
 	// Get the chapter list and send it in the response
-	// chapterList := []models.Chapter{}
-	// if mediaList.MediaList.Mapping != nil {
-	// 	// TODO: This should not be doing this. We should instead hit the database directly.
-	// 	chapterList, _ = jobs.RetrieveChaptersForMapping(*mediaList.MediaList.Mapping)
-	// }
+	chapterList := []models.Chapter{}
+	if mediaList.MediaList.Mapping != nil {
+		// TODO: This should not be doing this. We should instead hit the database directly.
+		chapterList, _ = jobs.RetrieveChaptersForMapping(*mediaList.MediaList.Mapping)
+	}
 
 	data := MangaShowResponse{
 		MediaList: &mediaList.MediaList,
+		Chapters:  chapterList,
 	}
 
 	return &data, nil

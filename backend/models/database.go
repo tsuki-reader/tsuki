@@ -24,6 +24,8 @@ func migrate() {
 	DATABASE.AutoMigrate(
 		&Account{},
 		&InstalledProvider{},
+		&Mapping{},
+		&Chapter{},
 	)
 }
 

@@ -10,8 +10,16 @@ export function AnilistStatus() {
   return window['go']['backend']['App']['AnilistStatus']();
 }
 
+export function AssignMapping(arg1, arg2) {
+  return window['go']['backend']['App']['AssignMapping'](arg1, arg2);
+}
+
 export function DomReady(arg1) {
   return window['go']['backend']['App']['DomReady'](arg1);
+}
+
+export function MangaChapterPages(arg1, arg2) {
+  return window['go']['backend']['App']['MangaChapterPages'](arg1, arg2);
 }
 
 export function MangaIndex() {
