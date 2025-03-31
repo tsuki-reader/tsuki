@@ -8,6 +8,7 @@ import (
 	"tsuki/backend/config"
 	"tsuki/backend/helpers"
 	"tsuki/backend/models"
+	"tsuki/backend/yaegi/interp"
 
 	"github.com/tsuki-reader/nisshoku/providers"
 	"gorm.io/gorm/clause"
@@ -46,11 +47,10 @@ func InstallProvider(repository Repository, providerId string, providerType prov
 	}
 	goScript := string(responseBytes)
 
-	// TODO: Evaluate the provider script using yaegi_interp.EvaluateProvider(goScript)
-	// _, err = yaegi_interp.EvaluateProvider(goScript)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	_, err = interp.EvaluateProvider(goScript)
+	if err != nil {
+		return nil, err
+	}
 
 	// Write the go script to the location filesystem.go
 	internalId := repository.BuildInternalProviderId(*foundProvider, providerType)
