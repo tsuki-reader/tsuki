@@ -22,6 +22,34 @@ export function MangaShow(arg1) {
   return window['go']['backend']['App']['MangaShow'](arg1);
 }
 
+export function ProvidersCreateOrUpdate(arg1, arg2, arg3) {
+  return window['go']['backend']['App']['ProvidersCreateOrUpdate'](arg1, arg2, arg3);
+}
+
+export function ProvidersDestroy(arg1, arg2, arg3) {
+  return window['go']['backend']['App']['ProvidersDestroy'](arg1, arg2, arg3);
+}
+
+export function ProvidersIndex(arg1, arg2) {
+  return window['go']['backend']['App']['ProvidersIndex'](arg1, arg2);
+}
+
+export function RepositoriesCreate(arg1) {
+  return window['go']['backend']['App']['RepositoriesCreate'](arg1);
+}
+
+export function RepositoriesDestroy(arg1) {
+  return window['go']['backend']['App']['RepositoriesDestroy'](arg1);
+}
+
+export function RepositoriesIndex() {
+  return window['go']['backend']['App']['RepositoriesIndex']();
+}
+
+export function RepositoriesUpdate(arg1) {
+  return window['go']['backend']['App']['RepositoriesUpdate'](arg1);
+}
+
 export function SignIn(arg1, arg2) {
   return window['go']['backend']['App']['SignIn'](arg1, arg2);
 }

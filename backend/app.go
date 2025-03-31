@@ -2,6 +2,7 @@ package backend
 
 import (
 	"context"
+	"tsuki/backend/config"
 	"tsuki/backend/models"
 )
 
@@ -12,6 +13,7 @@ type SessionData struct {
 // App struct
 type App struct {
 	CurrentAccount *models.Account
+	Config         *config.Config
 	ctx            context.Context
 }
 

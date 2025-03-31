@@ -1,7 +1,9 @@
 package models
 
 import (
+	"errors"
 	"log"
+	"tsuki/backend/config"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -10,8 +12,7 @@ import (
 var DATABASE *gorm.DB
 
 func Connect() {
-	// databaseLocation := core.CONFIG.Files.Database
-	database, err := gorm.Open(sqlite.Open("tsuki.db"), &gorm.Config{})
+	database, err := gorm.Open(sqlite.Open(config.CONFIG.Files.Database), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to the database: ", err)
 	}
@@ -22,10 +23,11 @@ func Connect() {
 func migrate() {
 	DATABASE.AutoMigrate(
 		&Account{},
+		&InstalledProvider{},
 	)
 }
 
-// func RecordExists(query interface{}, record interface{}) bool {
-// 	err := DATABASE.Where(query).First(record).Error
-// 	return !errors.Is(err, gorm.ErrRecordNotFound)
-// }
+func RecordExists(query interface{}, record interface{}) bool {
+	err := DATABASE.Where(query).First(record).Error
+	return !errors.Is(err, gorm.ErrRecordNotFound)
+}

@@ -1,6 +1,8 @@
 package models
 
 import (
+	"tsuki/backend/config"
+
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -19,8 +21,7 @@ func (account *Account) GenerateJWTToken() (string, error) {
 		"username": account.Username,
 	})
 
-	// TODO: Implement token signing with a secret key
-	signedToken, err := token.SignedString([]byte("iamarandomsecretkey"))
+	signedToken, err := token.SignedString([]byte(config.CONFIG.Server.SecretKey))
 	if err != nil {
 		return "", err
 	}

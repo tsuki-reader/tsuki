@@ -3,6 +3,7 @@ package backend
 import (
 	"encoding/json"
 	"os"
+	"tsuki/backend/config"
 	"tsuki/backend/models"
 )
 
@@ -23,7 +24,7 @@ func (a *App) SignOut() {
 
 func saveUserID(userID uint) error {
 	data := SessionData{UserID: userID}
-	file, err := os.Create("session.json")
+	file, err := os.Create(config.CONFIG.Files.Session)
 	if err != nil {
 		return err
 	}
@@ -34,7 +35,7 @@ func saveUserID(userID uint) error {
 }
 
 func loadUserID() (uint, error) {
-	file, err := os.Open("session.json")
+	file, err := os.Open(config.CONFIG.Files.Session)
 	if err != nil {
 		return 0, err
 	}
